@@ -7,5 +7,9 @@ build:
 	cd build && \
 	cmake ..
 
+test: cmake
+	cd build && \
+	./unitTests
+
 clean:
 	rm -rf build
