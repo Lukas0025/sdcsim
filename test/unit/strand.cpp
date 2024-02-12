@@ -76,3 +76,33 @@ TEST(Strand, saftyReadOnlyStrand) {
   // pointer cant be changed
   EXPECT_EQ(pointer, strand1.getAtom(0));
 }
+
+TEST(Strand, halfPairStrands) {
+  auto d1 = Domain(1);
+  auto d2 = Domain(2);
+  auto d3 = Domain(3);
+
+  auto strand1 = Strand();
+  auto strand2 = Strand();
+
+  strand1.addDomain(d1);
+  strand1.addDomain(d2);
+  strand1.addDomain(d3);
+  
+  strand2.addDomain(~d1);
+  strand2.addDomain(~d2);
+  strand2.addDomain(d3);
+
+  //do pairing
+  strand1.halfPairDomain(strand1.getAtom(0), strand2.getAtom(0));
+  strand1.halfPairDomain(strand1.getAtom(1), strand2.getAtom(1));
+
+  EXPECT_EQ(strand1.getAtom(0)->partner, strand2.getAtom(0));
+  EXPECT_EQ(strand1.getAtom(1)->partner, strand2.getAtom(1));
+
+  EXPECT_TRUE(strand2.getAtom(0)->partner == NULL);
+  EXPECT_TRUE(strand2.getAtom(1)->partner == NULL);
+
+  EXPECT_TRUE(strand1.getAtom(2)->partner == NULL);
+  EXPECT_TRUE(strand2.getAtom(2)->partner == NULL);
+}

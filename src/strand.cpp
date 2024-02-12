@@ -34,16 +34,25 @@ unsigned Strand::addDomain(Domain d) {
 }
 
 void Strand::pairDomain(Atom* atom1, Atom* atom2) {
-    //do cross linking
+    //do link a1 <-> a2
     atom1->partner = atom2;
     atom2->partner = atom1;
 }
 
-void Strand::alignmentPrint() {
-    for (auto atom = this->atoms->begin(); atom < this->atoms->end(); atom++) {
-        std::cout << atom->domain.get();
-        std::cout << " ";
+void Strand::halfPairDomain(Atom* atom1, Atom* atom2) {
+    //do link a1 -> a2
+    atom1->partner = atom2;
+}
+
+void Strand::halfUnpairDomain(Atom* atom1, Atom* atom2) {
+    //cut link a1 <- a2
+    if (atom2 != NULL && atom1 == atom2->partner) {
+        atom2->partner = NULL;
     }
+}
+
+void Strand::complementaryLast() {
+    this->atoms->at(this->length() - 1).domain = ~(this->atoms->at(this->length() - 1).domain);
 }
 
 Atom Strand::createAtom(Domain d) {

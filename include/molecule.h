@@ -1,3 +1,5 @@
+#pragma once
+
 class Molecule;
 
 #include <vector>
@@ -5,15 +7,23 @@ class Molecule;
 
 class Molecule {
     public:
-        Molecule();
+        Molecule(Strand *mainStrand);
         ~Molecule();
 
-        unsigned addStrand(Strand strand);
-        Strand   remStrand(unsigned index);
+        /**
+         * Bind from base to base
+         * @param strand strand to bind
+         */
+        unsigned addStrand(Strand *strand, int bindFrom);
+        void     remStrand(unsigned index);
+        void     pairUncomplete(unsigned index);
+        Strand*  getStrand(unsigned index);
 
-        void     pairStrands();
+        void     donePairStrands(unsigned index, unsigned from, unsigned to);
+        void     unPair(unsigned index);
+        unsigned size();
 
     private:
-
+        std::vector<Strand*>* strands;
 
 };

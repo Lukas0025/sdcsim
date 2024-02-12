@@ -25,6 +25,9 @@ include_directories(include)
 add_library(project_lib
     src/domain.cpp
     src/strand.cpp
+    src/molecule.cpp
+    src/output.cpp
+    src/assembly.cpp
 )
 
 # Add an executable
@@ -42,6 +45,7 @@ enable_testing()
 add_executable(unitTests
     test/unit/domain.cpp
     test/unit/strand.cpp
+    test/unit/molecule.cpp
 )
 
 # Standard linking to gtest stuff.

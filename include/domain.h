@@ -1,8 +1,10 @@
 #pragma once
 
 #include <cstdint>
+#include <limits.h>
 
 #define DOMAIN_DT uint16_t
+#define IS_COMPLEMENTARY(X) (X > (USHRT_MAX >> 1))
 
 class Domain {
     public:

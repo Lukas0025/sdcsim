@@ -1,3 +1,5 @@
+#pragma once
+
 class Strand;
 
 #include <vector>
@@ -16,9 +18,11 @@ class Strand {
 
         unsigned addDomain(Domain domain);
         static void pairDomain(Atom* atom1, Atom* atom2);
-        void alignmentPrint();
+        static void halfPairDomain(Atom* atom1, Atom* atom2);
+        static void halfUnpairDomain(Atom* atom1, Atom* atom2);
         Atom* getAtom(unsigned index);
         unsigned length();
+        void complementaryLast();
 
     private:
         Atom createAtom(Domain domain);

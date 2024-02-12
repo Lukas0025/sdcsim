@@ -1,17 +1,18 @@
 #include <iostream>
-#include "domain.h"
-#include "strand.h"
+#include "molecule.h"
+#include "assembly.h"
+#include "output.h"
 
 int main(int argc, char *argv[])
 {
-   auto chain1 = Strand();
+   std::vector<Molecule*> test;
+   std::vector<std::string> dictionary;
 
-   chain1.addDomain(Domain(0));
-   chain1.addDomain(Domain(1));
-   chain1.addDomain(Domain(2));
-   chain1.addDomain(Domain(3));
 
-   chain1.alignmentPrint();
+   assembly::parse("sdcasm/rule110.sdcasm", test, dictionary);
+
+   output::asciiPrint(*test[0], "", dictionary);
+   
    
    return 0;
 }
