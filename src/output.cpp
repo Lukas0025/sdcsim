@@ -1,6 +1,8 @@
 #include <vector>
 #include <string>
 #include <iostream>
+#include <cstring>
+
 #include "output.h"
 
 #define DEBUG
@@ -20,6 +22,22 @@ namespace output {
         }
 
         return maxNameCache;
+    }
+
+    inline bool isLast(Atom* a) {
+        return a == a->strand->getAtom(a->strand->length() - 1);
+    }
+
+    inline bool isFirstBinded(Atom* a) {
+        return a->strand->getAtom(0) == a || 
+               a[-1].partner == NULL      ||
+               a[-1].partner->strand != a->partner->strand;
+    }
+
+    inline bool isLastBinded(Atom* a) {
+        return a->strand->getAtom(a->strand->length() - 1) == a ||
+               a[1].partner == NULL                             ||
+               a[1].partner->strand != a->partner->strand;
     }
 
     inline std::string emptyDomain(std::vector<std::string> &names) {
@@ -53,7 +71,7 @@ namespace output {
         return padName + std::string(complement);
     }
 
-    std::string rawSubPrint(Strand* strand, char* space, std::vector<std::string> &names, unsigned bindedAt, unsigned &negativePad, int &endAt) {
+    std::string rawSubPrint(Strand* strand, char* space, std::vector<std::string> &names, unsigned bindedAt, unsigned &negativePad) {
         std::string str = std::string("");
         int link = -1;
         
@@ -67,7 +85,6 @@ namespace output {
             }
         }
 
-        endAt = strand->length() - link;
         link  = bindedAt - link;
 
         // pad by link
@@ -82,12 +99,24 @@ namespace output {
 
     }
 
+    inline std::string buildPadding(unsigned size) {
+        std::string str = "";
+
+        for (unsigned i = 0; i < size; i++) {
+            str += " ";
+        }
+
+        return str;
+    }
+
     void rawPrint(Molecule &molecule, char* space, std::vector<std::string> &names) {
         std::vector<std::string> displayString;
+        std::vector<unsigned> paddingSizes;
 
         auto mainStrand = molecule.getStrand(0);
 
         displayString.push_back(std::string("")); //main chain
+        paddingSizes .push_back(0);
 
         int endAt = 0;
 
@@ -96,30 +125,34 @@ namespace output {
 
             displayString[0] += getName(atom->domain.get(), names) + space;
 
-            if (atom->partner != NULL && endAt <= 0) {
+            if (atom->partner != NULL && isFirstBinded(atom->partner)) {
                 unsigned pad = 0;
 
-                displayString.push_back(rawSubPrint(atom->partner->strand, space, names, i, pad, endAt));
+                displayString.push_back(rawSubPrint(atom->partner->strand, space, names, i, pad));
 
-                //todo pad all existig and pad all feature
-                for (int i = 0; i < pad; i++) {
-                    displayString[0] = space + displayString[0];
-                    displayString[0] = emptyDomain(names) + displayString[0];
+                // compute different of curent padding with new
+                int diffPad = pad - paddingSizes[0];
+
+                // pad all existig and pad all feature
+                if (diffPad > 0) {
+                    for (auto &padding : paddingSizes) {
+                        padding += diffPad;
+                    }
                 }
+                
+                paddingSizes.push_back(pad - diffPad);
             }
-
-            endAt--;
         }
 
+        //                          MAX NAME        COMPLEMENT   SPACE STR
+        const unsigned onePadSize = getMaxName(names) + 1 + std::strlen(space);
+
         for (int i = displayString.size() - 1; i >= 0; i--) {
+            std::cout << buildPadding(onePadSize * paddingSizes[i]);
             std::cout << displayString[i].c_str();
             std::cout << '\n';
         }
 
-    }
-
-    inline bool isLast(Atom* a) {
-        return a == a->strand->getAtom(a->strand->length() - 1);
     }
 
     void asciiPrint(Molecule &molecule, char* space, std::vector<std::string> &names) {
@@ -139,25 +172,98 @@ namespace output {
             displayString[1] += "-";
 
             if (atom->partner != NULL) {
-                displayString[2] += "|";
-                displayString[3] += isLast(atom->partner) ? ">" : "-";
+                displayString[2] += "|" + buildPadding(getMaxName(names));
+                displayString[3] += (isLast(atom->partner) ? ">" : "-")
+                                 + buildPadding(getMaxName(names));
 
-                for (unsigned i = 0; i < getMaxName(names); i++) {
-                    displayString[2] += " ";
-                    displayString[3] += " ";
+                const auto partner = atom->partner;
+                const auto first   = partner->strand->getAtom(0);
+                const auto last    = partner->strand->getAtom(partner->strand->length() - 1);
+
+                //if first binded?
+                //we need display pre strend
+                // \ < THIS
+                //  -
+                //  |
+                //  -
+                if (isFirstBinded(partner)) {
+                    auto     overhang = partner;
+                    int      pos      = displayString[3].length() - 1;
+                    unsigned height   = 3;
+
+                    while(overhang != first) {
+                        //iterate over over hang
+                        overhang = &(overhang[-1]);
+
+                        //calculate new pos
+                        height += 1;
+                        pos    -= getMaxName(names) + 1 + std::strlen(space);
+
+                        // do correction
+                        if (pos < 0) {
+                            //ok pad all others expect as and get same extra space
+                            //we need -pos extra space for us
+                            for (auto &str : displayString) {
+                                str = buildPadding(-pos) + str;
+                            }
+
+                            pos = 0;
+                        }
+
+                        //push new
+                        if (height >= displayString.size()) {
+                            displayString.push_back(std::string(""));
+                        }
+
+                        //pad with spaces
+                        if (pos >= displayString[height].length()) {
+                            displayString[height] += buildPadding(pos - displayString[height].length() + 1);
+                        }
+
+                        displayString[height][pos] = displayString[height][pos] == '/' ? 'X' : '\\';
+                    }
                 }
+
+                //if last binded?
+                //we need display post strend
+                //  / < THIS
+                // -
+                // |
+                // -
+                if (isLastBinded(partner)) {
+                    auto     overhang = partner;
+                    // -1 for convert len to pos and -1 for space for char * = -2
+                    int      pos      = displayString[3].length() - 2 - getMaxName(names) - std::strlen(space);
+                    unsigned height   = 3;
+
+                    while(overhang != last) {
+                        //iterate over over hang
+                        overhang = &(overhang[1]);
+
+                        //calculate new pos
+                        height += 1;
+                        pos    += getMaxName(names) + 1 + std::strlen(space);
+
+                        //push new
+                        if (height >= displayString.size()) {
+                            displayString.push_back(std::string(""));
+                        }
+
+                        //pad with spaces
+                        if (pos >= displayString[height].length()) {
+                            displayString[height] += buildPadding(pos - displayString[height].length() + 1);
+                        }
+
+                        displayString[height][pos] = displayString[height][pos] == '\\' ? 'X' : '/';
+                    }
+                }
+
             } else {
-                for (unsigned i = 0; i < getMaxName(names) + 1; i++) {
-                    displayString[2] += " ";
-                    displayString[3] += " ";
-                }
+                displayString[2] += buildPadding(getMaxName(names) + 1);
+                displayString[3] += buildPadding(getMaxName(names) + 1);
             }
 
-            for (unsigned i = 0; i < getMaxName(names); i++) {
-                displayString[1] += " ";
-            }
-
-            displayString[1] += space;
+            displayString[1] += buildPadding(getMaxName(names)) + space;
             displayString[2] += space;
             displayString[3] += space;
         }

@@ -40,7 +40,6 @@ int main(int argc, char *argv[])
    if (outputType == "ascii") {
       output::asciiPrint(*test[0], "", dictionary);
    } else if (outputType == "raw") {
-      std::cout << test[0]->size() << '\n';
       output::rawPrint(*test[0], "", dictionary);
    }
    

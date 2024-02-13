@@ -147,6 +147,8 @@ namespace assembly {
         unsigned bindEnd       = 0;
         unsigned mainStrandPos = 0;
 
+        strMol += "{}"; // for parse lastest strand
+
         auto molecule = new Molecule(mainStrend);
 
         for (unsigned i = 0; i < strMol.length(); i++) {
@@ -158,8 +160,6 @@ namespace assembly {
                     if (workStrand != NULL) {
                         auto id = molecule->addStrand(workStrand, startPos);
                         molecule->donePairStrands(id, bindStart - startPos, bindEnd - startPos);
-
-                        std::cout << "<> bs: " << bindStart << " be: " << bindEnd  << " sp: " << startPos << '\n';
                     }
 
                     workStrand = new Strand();
@@ -239,12 +239,6 @@ namespace assembly {
                     //error here
                 }
             }
-        }
-
-        //add lastest
-        if (workStrand != NULL) {
-            auto id = molecule->addStrand(workStrand, startPos);
-            molecule->donePairStrands(id, bindStart - startPos, bindEnd - startPos);
         }
 
         return molecule;
