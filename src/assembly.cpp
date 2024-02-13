@@ -5,11 +5,13 @@
 #include <regex>
 #include <iostream>
 
+#define NOT_BINDED -1
+
 namespace assembly {
     const std::regex whitespaceRegex  ("[\t\f ]+");
     const std::regex defineRegex      ("\n *define *: *");
     const std::regex dataRegex        ("\n *data *: *");
-    const std::regex instructionsRegex("[\t\f\v ]*instructions[\t\f\v ]*:[\t\f\v ]*");
+    const std::regex instructionsRegex("\n *instructions *: *");
 
     void replaceAll(std::string& str, const std::string& from, const std::string& to) {
         if(from.empty()) return;
@@ -104,16 +106,13 @@ namespace assembly {
         bool down           = false;
         bool concat         = false;
         bool complement     = false;
-        int  mainStrandPos  = 0;
 
         auto mainStrend = new Strand();
 
         // first load only main strand
         for (unsigned i = 0; i < strMol.length(); i++) {
 
-            if (strMol[i] == '<') { // start of upper strand
-                up   = true;
-            } else if (strMol[i] == '[') { // start double strand
+            if (strMol[i] == '[') { // start double strand
                 dbl  = true;
             } else if (strMol[i] == '{') { // start of bottom strand
                 down = true;
@@ -121,8 +120,6 @@ namespace assembly {
                 dbl  = false;
             } else if (strMol[i] == '}') { // end of bottom strand
                 down = false;
-            } else if (strMol[i] == '>') { // end of upper strand
-                up   = false;
             } else {
                 if (down || dbl) {
                     if (strMol[i] == '*') {
@@ -134,8 +131,6 @@ namespace assembly {
                             )
                         );
                     }
-                } else if (up) {
-                    if (mainStrend->length() == 0 && strMol[i] != '*') mainStrandPos--;
                 }
             }
         }
@@ -146,10 +141,11 @@ namespace assembly {
         concat     = false;
         complement = false;
 
-        Strand* workStrand     = NULL;
-        unsigned startPos      = 0;
-        unsigned bindStart     = 0;
+        Strand*  workStrand    = NULL;
+        int      startPos      = 0;
+        int      bindStart     = NOT_BINDED; // not have bind start
         unsigned bindEnd       = 0;
+        unsigned mainStrandPos = 0;
 
         auto molecule = new Molecule(mainStrend);
 
@@ -161,11 +157,14 @@ namespace assembly {
                 if (!concat) {
                     if (workStrand != NULL) {
                         auto id = molecule->addStrand(workStrand, startPos);
-                        molecule->donePairStrands(id, bindStart, bindEnd);
+                        molecule->donePairStrands(id, bindStart - startPos, bindEnd - startPos);
+
+                        std::cout << "<> bs: " << bindStart << " be: " << bindEnd  << " sp: " << startPos << '\n';
                     }
 
                     workStrand = new Strand();
-                    startPos = mainStrandPos;
+                    startPos   = mainStrandPos;
+                    bindStart  = NOT_BINDED;
                 }
 
                 concat = false;
@@ -193,14 +192,14 @@ namespace assembly {
                 }
 
                 workStrand = NULL;
-
+                concat = false;
             } else if (strMol[i] == '>') { // end of upper strand
-                up   = false;
+                up     = false;
             } else if (strMol[i] == ']') { // end of double strand
-                bindEnd = mainStrandPos;
-                dbl     = false;
+                bindEnd = mainStrandPos - 1;
+                dbl    = false;
             } else if (strMol[i] == '}') { // end of bottom strand
-                down = false;
+                down   = false;
             } else if (strMol[i] == '.') { // concatenation
                 concat = true;
             } else {
@@ -215,7 +214,10 @@ namespace assembly {
                             )
                         );
 
-                        if (mainStrandPos < 0) mainStrandPos++;
+                        //binding not started
+                        if (bindStart == NOT_BINDED) {
+                            startPos--;
+                        }
                     }
                 } else if (down == true && strMol[i] != '*') {
                     mainStrandPos++;
@@ -230,8 +232,9 @@ namespace assembly {
                         );
 
                         workStrand->complementaryLast();
+
+                        mainStrandPos++;
                     }
-                    mainStrandPos++;
                 } else {
                     //error here
                 }
@@ -293,17 +296,20 @@ namespace assembly {
 
     }
 
-    void parse(char* filename, std::vector<Molecule*> &registers, std::vector<std::string> &dictionary) {
+    void parse(const char* filename, std::vector<Molecule*> &registers, std::vector<std::string> &dictionary) {
         //first open file
         std::ifstream asmFile(filename);
         
         //read whole file to string -- not good for big files.
         std::string asmStr((std::istreambuf_iterator<char>(asmFile)), std::istreambuf_iterator<char>());
 
-        //remove redundat spaces
+        //rewrite every whitespace to space + redundart
         asmStr = std::regex_replace(asmStr, whitespaceRegex, " ");
 
         std::vector<std::pair<std::string, std::string>> macros;
+
+        //add new line at start
+        asmStr = '\n' + asmStr + '\n'; // for working regex
 
         //get macros
         parseDefine(asmStr, macros);
