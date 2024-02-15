@@ -256,3 +256,25 @@ TEST(Molecule, unPairTwoStrands) {
   EXPECT_TRUE(mol.getStrand(0)->getAtom(2)->partner == NULL);
 
 }
+
+TEST(Molecule, addStrandNegative2) {
+  auto d1 = Domain(1);
+  auto d2 = Domain(2);
+
+  auto strand1 = Strand();
+  auto strand2 = Strand();
+
+  strand1.addDomain(d1);
+ 
+  strand2.addDomain(d2);
+  strand2.addDomain(~d1);
+
+  //simply create molecule
+  auto mol = Molecule(&strand1);
+
+  mol.addStrand(&strand2, -1);
+
+  EXPECT_TRUE(mol.getStrand(1)->getAtom(0)->partner == NULL);
+  EXPECT_EQ(mol.getStrand(1)->getAtom(1)->partner, mol.getStrand(0)->getAtom(0));
+
+}

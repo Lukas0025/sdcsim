@@ -135,6 +135,8 @@ namespace assembly {
             }
         }
 
+        // second parse all binded strands
+
         up         = false;
         dbl        = false;
         down       = false;

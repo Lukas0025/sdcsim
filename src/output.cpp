@@ -37,7 +37,8 @@ namespace output {
     inline bool isLastBinded(Atom* a) {
         return a->strand->getAtom(a->strand->length() - 1) == a ||
                a[1].partner == NULL                             ||
-               a[1].partner->strand != a->partner->strand;
+               a[1].partner->strand != a->partner->strand       ||
+               a[1].partner->partner == NULL;
     }
 
     inline std::string emptyDomain(std::vector<std::string> &names) {
@@ -153,6 +154,42 @@ namespace output {
             std::cout << '\n';
         }
 
+    }
+
+    std::string getPosInMol(Molecule &molecule, Atom* atom) {
+        for (unsigned iS = 0; iS < molecule.size(); iS++) {
+            auto strand = molecule.getStrand(iS);
+
+            for (unsigned i = 0; i < strand->length(); i++) {
+                if (strand->getAtom(i) == atom) return "S" + std::to_string(iS) + "A" + std::to_string(i);
+            }
+        }
+
+        return std::string("FREE");
+
+    }
+
+    void dummyPrint(Molecule &molecule, char* space, std::vector<std::string> &names) {
+
+        for (unsigned iS = 0; iS < molecule.size(); iS++) {
+            
+            std::cout << "S" << iS << " : ";
+
+            auto strand = molecule.getStrand(iS);
+
+            for (unsigned i = 0; i < strand->length(); i++) {
+
+                auto atom = strand->getAtom(i);
+
+                std::cout << getName(atom->domain.get(), names);
+                std::cout << " = " << getPosInMol(molecule, atom->partner);
+                std::cout << " | ";
+
+
+            }
+
+            std::cout << '\n';
+        }
     }
 
     void asciiPrint(Molecule &molecule, char* space, std::vector<std::string> &names) {

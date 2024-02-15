@@ -55,6 +55,7 @@ add_executable(unitTests
     test/unit/domain.cpp
     test/unit/strand.cpp
     test/unit/molecule.cpp
+    test/unit/assembly.cpp
 )
 
 # Standard linking to gtest stuff.

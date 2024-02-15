@@ -15,9 +15,9 @@ int main(int argc, char *argv[])
        .required();
 
    args.add_argument("-o", "--output")
-       .help("Define output tipe of simulation.")
+       .help("Define output type of simulation.")
        .default_value(std::string{"ascii"})
-       .choices("ascii", "raw", "svg");
+       .choices("ascii", "raw", "svg", "dummy");
 
    // parse args
    try {
@@ -38,9 +38,12 @@ int main(int argc, char *argv[])
    assembly::parse(sdcAsmFile.c_str(), test, dictionary);
 
    if (outputType == "ascii") {
-      output::asciiPrint(*test[0], "", dictionary);
+      for (auto &mol : test)
+         output::asciiPrint(*mol, "", dictionary);
    } else if (outputType == "raw") {
       output::rawPrint(*test[0], "", dictionary);
+   } else if (outputType == "dummy") {
+      output::dummyPrint(*test[0], "", dictionary);
    }
    
    

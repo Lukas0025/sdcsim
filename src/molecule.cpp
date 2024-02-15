@@ -26,7 +26,7 @@ unsigned Molecule::addStrand(Strand *strand, int bindFrom) {
     auto mainStrand = this->getStrand(0);
 
     //ok now do half pairing
-    for (unsigned i = mainBindFrom; i < std::min(strand->length() + mainBindFrom, mainStrand->length() - incomeBindFrom); i++) {
+    for (unsigned i = mainBindFrom; i < std::min(strand->length() + mainBindFrom, mainStrand->length()); i++) {
         auto bottom = mainStrand->getAtom(i);
         auto top    = strand->getAtom(i - mainBindFrom + incomeBindFrom);
 
@@ -56,13 +56,11 @@ Strand* Molecule::getStrand(unsigned index) {
 void Molecule::donePairStrands(unsigned index, unsigned from, unsigned to) {
     auto strand = this->getStrand(index);
 
-    for (unsigned i = 0; i < strand->length(); i++) {
+    for (unsigned i = from; i <= to; i++) {
         auto top    = strand->getAtom(i);
         
         if (top->partner != NULL) {
-            if (i >= from && i <= to) {
-                Strand::pairDomain(top, top->partner);
-            }
+            Strand::pairDomain(top, top->partner);
         }
     }
 }

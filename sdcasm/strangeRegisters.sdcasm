@@ -1,4 +1,8 @@
-
+#
+# SOME strage inital states of registers
+# @autor Lukáš Plevač <xpleva07@vutbr.cz>
+# @date 13.02.2024
+#
 
 data:
-    <AH*G>.[BC].<G*>{H}[AIO].<H*>[BA].<AH><AH>.[OK]{CD}[BA].<OI>
+    <B>.[A*B].<A*>{AH}[G].<O>
