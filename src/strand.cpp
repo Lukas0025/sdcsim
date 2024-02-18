@@ -21,6 +21,16 @@ Atom* Strand::getAtom(unsigned index) {
     return &((*this->atoms)[index]);
 }
 
+Strand* Strand::copy() {
+    auto str = new Strand();
+
+    for (auto &atom : *this->atoms) {
+        str->addDomain(atom.domain);   
+    }
+
+    return str;
+}
+
 unsigned Strand::addDomain(Domain d) {
     if (this->readOnly) {
         throw std::runtime_error("Try to add domain to read only strand");

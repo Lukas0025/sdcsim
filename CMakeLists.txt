@@ -36,6 +36,7 @@ add_library(project_lib
     src/molecule.cpp
     src/output.cpp
     src/assembly.cpp
+    src/register.cpp
 )
 
 # Add an executable

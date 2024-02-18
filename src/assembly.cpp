@@ -2,6 +2,7 @@
 #include <fstream>
 #include <streambuf>
 #include "molecule.h"
+#include "assembly.h"
 #include <regex>
 #include <iostream>
 
@@ -246,7 +247,65 @@ namespace assembly {
         return molecule;
     }
 
-    void parseData(std::string asmStr, std::vector<Molecule*> &registers, std::vector<std::string> &dictionary) {
+    void parseInstructions(std::string asmStr, std::vector<std::vector<Molecule*>> &instructions, std::vector<std::string> &dictionary) {
+        std::smatch datas;
+        
+        std::regex_search(asmStr, datas, instructionsRegex);
+        
+        // for every define
+        for (unsigned i = 0; i < datas.size(); ++i) {
+            // jump after label
+            auto pos = datas.position(i) + datas.length(i);
+
+            std::string reading  = "";
+            bool isComment       = false;
+
+            std::vector<Molecule*> molecules;
+
+            //ok now read char by char
+            for (unsigned i = pos; i < asmStr.length(); i++) {
+
+                if (asmStr[i] == '\n') {
+                    if (reading.length() > 0) {
+                        molecules.push_back(parseMolecule(reading, dictionary));
+                    }
+
+                    reading = "";
+
+                    if (molecules.size() > 0) {
+                        instructions.push_back(molecules);
+                    }
+
+                    isComment = false;
+                    continue;
+                }
+
+                if (isComment) continue;
+
+                if (asmStr[i] == '#') {
+                    isComment = true;
+                    continue;
+                }
+
+                if (asmStr[i] == ':') break; //new section 
+
+                if (asmStr[i] == ' ') {
+
+                    if (reading.length() > 0) {
+                        molecules.push_back(parseMolecule(reading, dictionary));
+                        reading = "";
+                    }
+
+                    continue;
+                }
+                
+                reading += asmStr[i];
+            }
+        }
+
+    }
+
+    void parseData(std::string asmStr, std::vector<Register*> &registers, std::vector<std::string> &dictionary) {
         std::smatch datas;
         
         std::regex_search(asmStr, datas, dataRegex);
@@ -264,7 +323,7 @@ namespace assembly {
 
                 if (asmStr[i] == '\n') {
                     if (reading.length() > 0) {
-                        registers.push_back(parseMolecule(reading, dictionary));
+                        registers.push_back(new Register(parseMolecule(reading, dictionary)));
 
                         reading = "";
                     }
@@ -292,7 +351,7 @@ namespace assembly {
 
     }
 
-    void parse(const char* filename, std::vector<Molecule*> &registers, std::vector<std::string> &dictionary) {
+    void parse(const char* filename, std::vector<Register*> &registers, std::vector<std::vector<Molecule*>> &inst, std::vector<std::string> &dictionary) {
         //first open file
         std::ifstream asmFile(filename);
         
@@ -315,6 +374,10 @@ namespace assembly {
             replaceAll(asmStr, macro.first, macro.second);
         }
 
+        // load registers
         parseData(asmStr, registers, dictionary);
+
+        // load instructions
+        parseInstructions(asmStr, inst, dictionary);
     }
 }

@@ -3,6 +3,26 @@
 #include "molecule.h"
 #include "assembly.h"
 #include "output.h"
+#include "register.h"
+
+inline void printRegisters(std::vector<Register*> &registers, std::vector<std::string> &dictionary, const std::string &outputType) {
+   if (outputType == "ascii") {
+      for (auto &reg : registers) {
+         output::asciiPrint(*reg->get(), "", dictionary);
+         std::cout << '\n';
+      }
+   } else if (outputType == "raw") {
+      for (auto &reg : registers) {
+         output::rawPrint(*reg->get(), "", dictionary);
+         std::cout << '\n';
+      }
+   } else if (outputType == "dummy") {
+      for (auto &reg : registers) {
+         output::dummyPrint(*reg->get(), "", dictionary);
+         std::cout << '\n';
+      }
+   }
+}
 
 int main(int argc, char *argv[])
 {
@@ -32,19 +52,37 @@ int main(int argc, char *argv[])
    auto outputType = args.get<std::string>("-o");
 
 
-   std::vector<Molecule*> test;
-   std::vector<std::string> dictionary;
+   std::vector<std::vector<Molecule*>> instructions;
+   std::vector<Register*>              registers;
+   std::vector<std::string>            dictionary;
 
-   assembly::parse(sdcAsmFile.c_str(), test, dictionary);
+   //parse assembly file
+   assembly::parse(sdcAsmFile.c_str(), registers, instructions, dictionary);
 
-   if (outputType == "ascii") {
-      for (auto &mol : test)
-         output::asciiPrint(*mol, "", dictionary);
-   } else if (outputType == "raw") {
-      output::rawPrint(*test[0], "", dictionary);
-   } else if (outputType == "dummy") {
-      output::dummyPrint(*test[0], "", dictionary);
+   std::cout << "--------------------------------\n";
+   std::cout << "|       INITAL REGISTERS       |\n";
+   std::cout << "--------------------------------\n";
+   std::cout << '\n';
+
+   printRegisters(registers, dictionary, outputType);
+
+   // apply instruction
+   for (auto &instruction : instructions) {
+      for (auto &reg : registers) {
+         reg->applyInstruction(instruction);
+      }
+
+      std::cout << '\n';
+      std::cout << "--------------------------------\n";
+      std::cout << "|         INSTRUCTION          |\n";
+      std::cout << "--------------------------------\n";
+      std::cout << '\n';
+
+      printRegisters(registers, dictionary, outputType);  
    }
+
+   //print output
+   //end
    
    
    return 0;

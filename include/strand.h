@@ -16,6 +16,8 @@ class Strand {
         Strand();
         ~Strand();
 
+        Strand* copy();
+
         unsigned addDomain(Domain domain);
         static void pairDomain(Atom* atom1, Atom* atom2);
         static void halfPairDomain(Atom* atom1, Atom* atom2);
