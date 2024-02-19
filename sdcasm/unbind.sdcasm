@@ -1,0 +1,11 @@
+#
+# Simple store example in Sticker system
+# @autor Lukáš Plevač <xpleva07@vutbr.cz>
+# @date 18.02.2024
+#
+
+data:
+    [ABC].<F*>[ABC].<F*>[ABC].<F*>
+
+instructions:
+    {BCF} # this do unbind

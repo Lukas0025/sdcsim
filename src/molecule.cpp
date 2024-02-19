@@ -40,10 +40,19 @@ unsigned Molecule::addStrand(Strand *strand, int bindFrom) {
 }
 
 void Molecule::remStrand(unsigned index) {
-    Strand* tmp = this->strands->at(index);
 
+    if (index == 0) return; // main strand is nundeleteble
+
+    //do unlink
+    for (unsigned i = 0; i < this->strands->at(index)->length(); i++) {
+        if (this->strands->at(index)->getAtom(i)->partner != NULL && 
+            this->strands->at(index)->getAtom(i)->partner->partner == this->strands->at(index)->getAtom(i)) {
+                this->strands->at(index)->getAtom(i)->partner->partner = NULL;
+        }
+    }
+    
     //get lastest index
-    this->strands[index] = this->strands[this->strands->size() - 1];
+    this->strands->at(index) = this->strands->at(this->strands->size() - 1);
 
     //and remove last
     this->strands->pop_back();

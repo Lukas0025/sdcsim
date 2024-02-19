@@ -16,6 +16,10 @@ void Register::applyInstruction(std::vector<Molecule*> instruction) {
         auto preAddRegSize = this->reg->size();
 
         for (auto &inst : instruction) {
+            this->removeUnbinded(inst);
+        }
+
+        for (auto &inst : instruction) {
             this->doAllBinding(inst);
         }
 
@@ -68,5 +72,59 @@ void Register::removeReplaced(unsigned oldSize) {
 }
 
 void Register::removeUnstable() {
+
+}
+
+void Register::removeUnbinded(Molecule* mol) {
+    if (mol->size() == 0) return; // nothing to bind
+
+    auto strand = mol->getStrand(0);
+
+    for (int i = this->reg->size() - 1; i >= 1; i--) {
+        auto mainStrand     = this->reg->getStrand(i);
+        unsigned bindScore  = 0;
+
+        // calculate bind score
+        for (int i = 0; i < mainStrand->length(); i++) {
+            if (mainStrand->getAtom(i)->partner != NULL &&
+                mainStrand->getAtom(i)->partner->partner == mainStrand->getAtom(i)) {
+                bindScore++;
+            }
+        }
+
+
+        // for all possible bindigs
+        for (int i = 1 - (int)strand->length(); i < (int)mainStrand->length(); i++) {
+
+            unsigned alignScore   = 0;
+            unsigned pullingScore = 0;
+            unsigned compareEnd   = std::min(strand->length(), mainStrand->length() - i);
+            bool     canPull      = false;
+
+            //try aligment it and check score
+            for (int baseID = i < 0 ? std::abs(i) : 0; baseID < compareEnd; baseID++) {
+                
+                if (~(strand->getAtom(baseID)->domain) == mainStrand->getAtom(i + baseID)->domain) {
+
+                    if (mainStrand->getAtom(i + baseID)->partner == NULL || mainStrand->getAtom(i + baseID)->partner->partner != mainStrand->getAtom(i + baseID)) {
+                        canPull = true;
+                    } else {
+                        pullingScore += 1;
+                    }
+
+                    alignScore += 1;
+
+                }
+            }
+
+            //this do unbind?
+            if (alignScore >= 2 && (bindScore - pullingScore) <= 1) {
+                this->reg->remStrand(i);
+            }
+        }
+
+    }
+
+
 
 }
