@@ -274,6 +274,7 @@ namespace assembly {
 
                     if (molecules.size() > 0) {
                         instructions.push_back(molecules);
+                        molecules.clear();
                     }
 
                     isComment = false;

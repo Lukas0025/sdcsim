@@ -13,7 +13,7 @@ class Register {
     private:
         void doAllBinding(Molecule* mol);
         void removeReplaced(unsigned oldSize);
-        void removeUnstable();
+        void removeUnstable(int to);
         void removeUnbinded(Molecule* mol);
 
         Molecule *reg; // molecule reprezenting register

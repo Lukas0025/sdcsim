@@ -25,11 +25,15 @@ class Strand {
         Atom* getAtom(unsigned index);
         unsigned length();
         void complementaryLast();
+        void del();
+        bool isDeleted();
 
     private:
         Atom createAtom(Domain domain);
 
         std::vector<Atom>* atoms;
+        
         bool readOnly;
+        bool deleted;
 
 };

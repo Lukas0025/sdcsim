@@ -22,6 +22,7 @@ class Molecule {
         void     donePairStrands(unsigned index, unsigned from, unsigned to);
         void     unPair(unsigned index);
         unsigned size();
+        void     finishDelete();
 
     private:
         std::vector<Strand*>* strands;

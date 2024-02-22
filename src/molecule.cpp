@@ -1,5 +1,6 @@
 #include <cstddef>
 #include "molecule.h"
+#include <iostream>
 
 Molecule::Molecule(Strand *strand) {
     this->strands = new std::vector<Strand*>;
@@ -49,13 +50,24 @@ void Molecule::remStrand(unsigned index) {
             this->strands->at(index)->getAtom(i)->partner->partner == this->strands->at(index)->getAtom(i)) {
                 this->strands->at(index)->getAtom(i)->partner->partner = NULL;
         }
-    }
-    
-    //get lastest index
-    this->strands->at(index) = this->strands->at(this->strands->size() - 1);
 
-    //and remove last
-    this->strands->pop_back();
+        this->strands->at(index)->getAtom(i)->partner = NULL;
+    }
+
+    // set deleted flag
+    this->strands->at(index)->del();
+}
+
+void Molecule::finishDelete() {
+    for (int i = this->strands->size() - 1; i >= 0; i--) {
+        if (this->strands->at(i)->isDeleted()) {
+            //get lastest index
+            this->strands->at(i) = this->strands->at(this->strands->size() - 1);
+
+            //and remove last
+            this->strands->pop_back();
+        }
+    }
 }
 
 Strand* Molecule::getStrand(unsigned index) {
@@ -75,12 +87,32 @@ void Molecule::donePairStrands(unsigned index, unsigned from, unsigned to) {
 }
 
 void Molecule::pairUncomplete(unsigned index) {
-    auto strand = this->strands->at(index);
 
-    for (unsigned i = 0; i < strand->length(); i++) {
+    auto strand = this->strands->at(index);
+    bool binded = false;
+
+    for (int i = strand->length() - 1; i >= 0; i--) {
         auto top    = strand->getAtom(i);
-            
-        if (top->partner != NULL && top->partner->partner == NULL) {
+        
+        if (top->partner != NULL && top->partner->partner == top) {
+            binded = true;
+        }
+
+        if (top->partner != NULL && top->partner->partner == NULL && binded) {
+            Strand::pairDomain(top, top->partner);
+        }
+    }
+
+    binded = false;
+
+    for (int i = 0; i < strand->length(); i++) {
+        auto top    = strand->getAtom(i);
+        
+        if (top->partner != NULL && top->partner->partner == top) {
+            binded = true;
+        }
+
+        if (top->partner != NULL && top->partner->partner == NULL && binded) {
             Strand::pairDomain(top, top->partner);
         }
     }

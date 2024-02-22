@@ -5,7 +5,7 @@
 #
 
 data:
-    [ABC].<F*>[ABC].<F*>[ABC].<F*>
+    [ABC].<F*>[ABC][ABC].<F*>
 
 instructions:
     {BCF} # this do unbind

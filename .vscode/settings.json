@@ -67,5 +67,6 @@
         "variant": "cpp",
         "bitset": "cpp",
         "regex": "cpp"
-    }
+    },
+    "cmake.configureOnOpen": false
 }

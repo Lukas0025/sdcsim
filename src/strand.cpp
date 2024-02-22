@@ -3,7 +3,8 @@
 #include <stdexcept>
 
 Strand::Strand() {
-    this->atoms = new std::vector<Atom>;
+    this->atoms    = new std::vector<Atom>;
+    this->deleted  = false;
     this->readOnly = false;
 }
 
@@ -29,6 +30,14 @@ Strand* Strand::copy() {
     }
 
     return str;
+}
+
+void Strand::del() {
+    this->deleted = true;
+}
+
+bool Strand::isDeleted() {
+    return this->deleted;
 }
 
 unsigned Strand::addDomain(Domain d) {

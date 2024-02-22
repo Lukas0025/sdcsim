@@ -28,16 +28,24 @@ namespace output {
         return a == a->strand->getAtom(a->strand->length() - 1);
     }
 
+    inline bool isFirst(Atom *a) {
+        return a->strand->getAtom(0) == a;
+    }
+
     inline bool isFirstBinded(Atom* a) {
-        return a->strand->getAtom(0) == a || 
-               a[-1].partner == NULL      ||
+        return a->strand->getAtom(0) == a                                || 
+               a[-1].partner == NULL                                     ||
+               a[-1].partner->partner == NULL                            ||
+               a[-1].partner->partner->strand  != a->strand              ||
                a[-1].partner->strand != a->partner->strand;
     }
 
     inline bool isLastBinded(Atom* a) {
-        return a->strand->getAtom(a->strand->length() - 1) == a ||
-               a[1].partner == NULL                             ||
-               a[1].partner->strand != a->partner->strand       ||
+        return a->strand->getAtom(a->strand->length() - 1) == a          ||
+               a[1].partner == NULL                                      ||
+               a[1].partner->partner == NULL                             ||
+               a[1].partner->strand           != a->partner->strand      ||
+               a[1].partner->partner->strand  != a->strand               ||
                a[1].partner->partner == NULL;
     }
 
@@ -209,9 +217,12 @@ namespace output {
             displayString[1] += "-";
 
             if (atom->partner != NULL) {
+                const std::string atomStr = isLast(atom->partner)                                   ? ">"  : 
+                                            isLastBinded(atom->partner)                             ? "/"  : 
+                                            isFirstBinded(atom->partner) && !isFirst(atom->partner) ? "\\" : "-";
+
                 displayString[2] += "|" + buildPadding(getMaxName(names));
-                displayString[3] += (isLast(atom->partner) ? ">" : "-")
-                                 + buildPadding(getMaxName(names));
+                displayString[3] += atomStr + buildPadding(getMaxName(names));
 
                 const auto partner = atom->partner;
                 const auto first   = partner->strand->getAtom(0);
@@ -225,7 +236,7 @@ namespace output {
                 //  -
                 if (isFirstBinded(partner)) {
                     auto     overhang = partner;
-                    int      pos      = displayString[3].length() - 1;
+                    int      pos      = displayString[3].length() - 1 - getMaxName(names) - std::strlen(space);
                     unsigned height   = 3;
 
                     while(overhang != first) {
@@ -269,8 +280,8 @@ namespace output {
                 // -
                 if (isLastBinded(partner)) {
                     auto     overhang = partner;
-                    // -1 for convert len to pos and -1 for space for char * = -2
-                    int      pos      = displayString[3].length() - 2 - getMaxName(names) - std::strlen(space);
+                    // -1 for convert len to pos
+                    int      pos      = displayString[3].length() - 1 - getMaxName(names) - std::strlen(space);
                     unsigned height   = 3;
 
                     while(overhang != last) {
