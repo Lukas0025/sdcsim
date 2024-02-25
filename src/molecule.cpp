@@ -46,12 +46,7 @@ void Molecule::remStrand(unsigned index) {
 
     //do unlink
     for (unsigned i = 0; i < this->strands->at(index)->length(); i++) {
-        if (this->strands->at(index)->getAtom(i)->partner != NULL && 
-            this->strands->at(index)->getAtom(i)->partner->partner == this->strands->at(index)->getAtom(i)) {
-                this->strands->at(index)->getAtom(i)->partner->partner = NULL;
-        }
-
-        this->strands->at(index)->getAtom(i)->partner = NULL;
+        Strand::unpairDomain(this->strands->at(index)->getAtom(i));
     }
 
     // set deleted flag
@@ -115,16 +110,6 @@ void Molecule::pairUncomplete(unsigned index) {
         if (top->partner != NULL && top->partner->partner == NULL && binded) {
             Strand::pairDomain(top, top->partner);
         }
-    }
-}
-
-void Molecule::unPair(unsigned index) {
-    auto strand = this->strands->at(index);
-
-    for (unsigned i = 0; i < strand->length(); i++) {
-        auto top    = strand->getAtom(i);
-            
-        Strand::halfUnpairDomain(top, top->partner);
     }
 }
 

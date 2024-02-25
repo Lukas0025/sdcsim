@@ -20,9 +20,10 @@ class Molecule {
         Strand*  getStrand(unsigned index);
 
         void     donePairStrands(unsigned index, unsigned from, unsigned to);
-        void     unPair(unsigned index);
         unsigned size();
         void     finishDelete();
+
+        void     unbindOfMultiple();
 
     private:
         std::vector<Strand*>* strands;

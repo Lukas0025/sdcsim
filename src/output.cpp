@@ -134,7 +134,7 @@ namespace output {
 
             displayString[0] += getName(atom->domain.get(), names) + space;
 
-            if (atom->partner != NULL && isFirstBinded(atom->partner)) {
+            if (atom->partner != NULL && atom->partner != multiAtom && isFirstBinded(atom->partner)) {
                 unsigned pad = 0;
 
                 displayString.push_back(rawSubPrint(atom->partner->strand, space, names, i, pad));
@@ -173,7 +173,7 @@ namespace output {
             }
         }
 
-        return std::string("FREE");
+        return atom == multiAtom ? std::string("MORE") : std::string("FREE");
 
     }
 
@@ -191,6 +191,7 @@ namespace output {
 
                 std::cout << getName(atom->domain.get(), names);
                 std::cout << " = " << getPosInMol(molecule, atom->partner);
+                std::cout << " (" << atom->partnersCount << ")";
                 std::cout << " | ";
 
 
@@ -216,7 +217,7 @@ namespace output {
             displayString[0] += getName(atom->domain.get(), names) + space;
             displayString[1] += "-";
 
-            if (atom->partner != NULL) {
+            if (atom->partner != NULL && atom->partner != multiAtom) {
                 const std::string atomStr = isLast(atom->partner)                                   ? ">"  : 
                                             isLastBinded(atom->partner)                             ? "/"  : 
                                             isFirstBinded(atom->partner) && !isFirst(atom->partner) ? "\\" : "-";

@@ -15,6 +15,8 @@ class Register {
         void removeReplaced(unsigned oldSize);
         void removeUnstable(int to);
         void removeUnbinded(Molecule* mol);
+        void unbindOfMultiple();
+        void bindOfMultiple();
 
         Molecule *reg; // molecule reprezenting register
 };

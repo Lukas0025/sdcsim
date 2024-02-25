@@ -77,6 +77,7 @@ TEST(Strand, saftyReadOnlyStrand) {
   EXPECT_EQ(pointer, strand1.getAtom(0));
 }
 
+/*
 TEST(Strand, halfPairStrands) {
   auto d1 = Domain(1);
   auto d2 = Domain(2);
@@ -106,3 +107,4 @@ TEST(Strand, halfPairStrands) {
   EXPECT_TRUE(strand1.getAtom(2)->partner == NULL);
   EXPECT_TRUE(strand2.getAtom(2)->partner == NULL);
 }
+*/

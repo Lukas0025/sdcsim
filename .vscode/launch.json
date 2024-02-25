@@ -4,10 +4,34 @@
         {
             "type": "by-gdb",
             "request": "launch",
-            "name": "gdb",
+            "name": "gdb (110)",
             "program": "/home/lukasplevac/Dev/git/sdcsim/debug_build/sdcsim",
             "cwd": "/home/lukasplevac/Dev/git/sdcsim/",
             "programArgs": "./sdcasm/rule110.sdcasm",
+            //"stopAtEntry": true,
+
+            "ssh": {
+                "enabled": true,
+                "address": "10.0.0.2",
+                "username": "lukasplevac",
+                "passwordType": "inputAndSave",
+                "timeout":1000,
+                //"privateKey":"~/.ssh/id_rsa"
+                //"remoteSrcPrefix": "/root/test/src",
+                //"loacalSrcPrefix": ""
+                // "transfer": [
+                //     {"from": "z:/tmp/src/project1","to": "/root/test/project1"}
+                // ]
+            }
+        },
+
+        {
+            "type": "by-gdb",
+            "request": "launch",
+            "name": "gdb (inc)",
+            "program": "/home/lukasplevac/Dev/git/sdcsim/debug_build/sdcsim",
+            "cwd": "/home/lukasplevac/Dev/git/sdcsim/",
+            "programArgs": "./sdcasm/inc.sdcasm",
             //"stopAtEntry": true,
 
             "ssh": {

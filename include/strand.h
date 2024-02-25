@@ -4,12 +4,16 @@ class Strand;
 
 #include <vector>
 #include "domain.h"
+#include <cstddef>
 
 typedef struct atom_ {
     Domain         domain;
     struct atom_*  partner;
     Strand*        strand;
+    int            partnersCount;
 } Atom;
+
+extern Atom* multiAtom;
 
 class Strand {
     public:
@@ -21,7 +25,7 @@ class Strand {
         unsigned addDomain(Domain domain);
         static void pairDomain(Atom* atom1, Atom* atom2);
         static void halfPairDomain(Atom* atom1, Atom* atom2);
-        static void halfUnpairDomain(Atom* atom1, Atom* atom2);
+        static void unpairDomain(Atom* atom1);
         Atom* getAtom(unsigned index);
         unsigned length();
         void complementaryLast();

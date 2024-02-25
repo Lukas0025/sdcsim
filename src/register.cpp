@@ -12,7 +12,7 @@ Molecule* Register::get() {
 
 void Register::applyInstruction(std::vector<Molecule*> instruction) {
     
-    for (unsigned i = 0; i < 1; i++) {
+    for (unsigned i = 0; i < 100; i++) {
         for (auto &inst : instruction) {
             this->removeUnbinded(inst);
         }
@@ -33,9 +33,13 @@ void Register::applyInstruction(std::vector<Molecule*> instruction) {
 
         this->removeUnstable(this->reg->size() - 1);
 
+        this->bindOfMultiple();
+
         for (unsigned i = 0; i < this->reg->size(); i++) {
             this->reg->pairUncomplete(i);
         }
+
+        this->unbindOfMultiple();
         
         this->reg->finishDelete();
     }
@@ -140,6 +144,30 @@ void Register::removeUnstable(int to) {
         //this do unbind?
         if (bindScore < 2) {
             this->reg->remStrand(i);
+        }
+    }
+}
+
+void Register::unbindOfMultiple() {
+    auto mainStrand = this->reg->getStrand(0);
+
+    for (int i = 0; i < mainStrand->length(); i++) {
+        auto atom = mainStrand->getAtom(i);
+
+        if (atom->partnersCount > 1) {
+            atom->partner = multiAtom;
+        }
+    }
+}
+
+void Register::bindOfMultiple() {
+    auto mainStrand = this->reg->getStrand(0);
+
+    for (int i = 0; i < mainStrand->length(); i++) {
+        auto atom = mainStrand->getAtom(i);
+
+        if (atom->partnersCount < 2 && atom->partner == multiAtom) {
+            atom->partner = NULL;
         }
     }
 }

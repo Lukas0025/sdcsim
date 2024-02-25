@@ -2,6 +2,10 @@
 #include <iostream>
 #include <stdexcept>
 
+/* Definice zarážky */
+Atom multiAtomStack = {0, NULL, NULL, 0};
+Atom *multiAtom     = &multiAtomStack;
+
 Strand::Strand() {
     this->atoms    = new std::vector<Atom>;
     this->deleted  = false;
@@ -60,14 +64,20 @@ void Strand::pairDomain(Atom* atom1, Atom* atom2) {
 
 void Strand::halfPairDomain(Atom* atom1, Atom* atom2) {
     //do link a1 -> a2
-    atom1->partner = atom2;
+    atom1->partner        = atom2;
+    
+    atom1->partnersCount += 1;
+    atom2->partnersCount += 1;
 }
 
-void Strand::halfUnpairDomain(Atom* atom1, Atom* atom2) {
-    //cut link a1 <- a2
-    if (atom2 != NULL && atom1 == atom2->partner) {
-        atom2->partner = NULL;
-    }
+void Strand::unpairDomain(Atom* atom) {
+    if (atom->partner == NULL)           return;
+    if (atom->partner->partner == atom)  atom->partner->partner = NULL;
+
+    atom->partner->partnersCount -= 1;
+    atom->partnersCount          -= 1;
+
+    atom->partner = NULL;
 }
 
 void Strand::complementaryLast() {
@@ -75,7 +85,7 @@ void Strand::complementaryLast() {
 }
 
 Atom Strand::createAtom(Domain d) {
-    Atom a = {d, NULL, this};
+    Atom a = {d, NULL, this, 0};
 
     return a;
 }
