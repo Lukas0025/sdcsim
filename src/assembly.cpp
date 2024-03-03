@@ -2,6 +2,7 @@
 #include <fstream>
 #include <streambuf>
 #include "molecule.h"
+#include "output.h"
 #include "assembly.h"
 #include <regex>
 #include <iostream>
@@ -23,6 +24,80 @@ namespace assembly {
             str.replace(start_pos, from.length(), to);
             start_pos += to.length();
         }
+    }
+
+    std::string createAssembly(Molecule* mol, std::vector<std::string> &names) {
+        std::string code = "";
+
+        auto mainStrand = mol->getStrand(0);
+
+        bool isLower = false;
+
+        for (unsigned i = 0; i < mainStrand->length(); i++) {
+
+            auto atom = mainStrand->getAtom(i);
+
+            if (atom->partner != NULL && atom->partner != multiAtom) {
+
+                if (isLower) code += "}";
+
+                if (output::isFirstBinded(atom->partner)) {
+                    if (!output::isFirst(atom->partner)) {
+                        auto strand = atom->partner->strand;
+                        
+                        code += "<";
+                        
+                        for (unsigned j = 0; j < strand->length(); j++) {
+                            if (strand->getAtom(j) == atom->partner) break;
+
+                            code += output::getNameShort(strand->getAtom(j)->domain.get(), names);
+                        }
+
+                        code += ">.";
+                    }
+
+                    code += "[";
+
+                }
+
+                code += output::getNameShort(atom->domain.get(), names);
+
+                if (output::isLastBinded(atom->partner)) {
+                    
+                    code += "]";
+
+                    if (!output::isLast(atom->partner)) {
+                        auto strand = atom->partner->strand;
+                        
+                        std::string tmp = "";
+                        
+                        for (int j = strand->length() - 1; j >= 0; j--) {
+                            if (strand->getAtom(j) == atom->partner) break;
+
+                            tmp = output::getNameShort(strand->getAtom(j)->domain.get(), names) + tmp;
+                        }
+
+                        code += ".<" + tmp + ">";
+                    }
+                }
+
+                isLower = false;
+                
+            } else {
+
+                if (!isLower)     code += "{";
+
+                code += output::getNameShort(atom->domain.get(), names);
+
+                isLower                 = true;
+            }
+
+
+        }
+
+        if (isLower) code += "}";
+
+        return code;
     }
 
     void parseDefine(std::string asmStr, std::vector<std::pair<std::string, std::string>> &macros) {
@@ -352,7 +427,7 @@ namespace assembly {
 
     }
 
-    void parse(const char* filename, std::vector<Register*> &registers, std::vector<std::vector<Molecule*>> &inst, std::vector<std::string> &dictionary) {
+    void parse(const char* filename, std::vector<Register*> &registers, std::vector<std::vector<Molecule*>> &inst, std::vector<std::string> &dictionary, std::vector<std::pair<std::string, std::string>> &macros) {
         //first open file
         std::ifstream asmFile(filename);
         
@@ -361,8 +436,6 @@ namespace assembly {
 
         //rewrite every whitespace to space + redundart
         asmStr = std::regex_replace(asmStr, whitespaceRegex, " ");
-
-        std::vector<std::pair<std::string, std::string>> macros;
 
         //add new line at start
         asmStr = '\n' + asmStr + '\n'; // for working regex

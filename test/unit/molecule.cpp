@@ -121,6 +121,7 @@ TEST(Molecule, uncompletePairStrands) {
 
   mol.addStrand(&strand1, 0);
 
+  mol.donePairStrands(1, 0, 0); // create bind spot
   mol.pairUncomplete(1);
 
   EXPECT_EQ(mol.getStrand(1)->getAtom(0)->partner, mol.getStrand(0)->getAtom(0));
@@ -160,6 +161,9 @@ TEST(Molecule, uncompletePairTwoStrands) {
 
   mol.addStrand(&strand2, 0);
   mol.addStrand(&strand3, 0);
+
+  mol.donePairStrands(1, 0, 0); // create bind spot
+  mol.donePairStrands(2, 2, 2); // create bind spot
 
   mol.pairUncomplete(1);
   mol.pairUncomplete(2);

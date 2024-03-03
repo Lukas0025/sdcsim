@@ -19,7 +19,20 @@ debug: debug_build
 test: cmake
 	cd build && \
 	./unitTests
+	@echo "Starting E2E"
+	for f in ./test/e2e/*; do \
+		if [ -d "$$f" -a $$(echo -n "$$f" | tail -c 1) != "-" ]; then \
+			mkdir ./test-submission/ && \
+			cp -r ./build/* ./test-submission/ && \
+			cp -r $$f/*     ./test-submission/ && \
+			cd ./test-submission && $(MAKE) -s test && \
+			cd ../ && \
+			rm -rf ./test-submission/; \
+		fi \
+	done
+	@echo "[info] All tests PASS \e[33m ^_^ \e[39m"
 
 clean:
 	rm -rf build
 	rm -rf debug_build
+	rm -rf ./test-submission/

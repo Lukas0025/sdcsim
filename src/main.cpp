@@ -5,7 +5,7 @@
 #include "output.h"
 #include "register.h"
 
-inline void printRegisters(std::vector<Register*> &registers, std::vector<std::string> &dictionary, const std::string &outputType) {
+inline void printRegisters(std::vector<Register*> &registers, std::vector<std::string> &dictionary, const std::string &outputType, std::vector<std::pair<std::string, std::string>> &macros) {
    if (outputType == "ascii") {
       for (auto &reg : registers) {
          output::asciiPrint(*reg->get(), "", dictionary);
@@ -21,6 +21,11 @@ inline void printRegisters(std::vector<Register*> &registers, std::vector<std::s
          output::dummyPrint(*reg->get(), "", dictionary);
          std::cout << '\n';
       }
+   } else if (outputType == "assembly") {
+      for (auto &reg : registers) {
+         output::assemblyPrint(*reg->get(), "", dictionary, macros);
+         std::cout << '\n';
+      }
    }
 }
 
@@ -34,10 +39,15 @@ int main(int argc, char *argv[])
        .help("File with SDC Assembly code of SDC program.")
        .required();
 
-   args.add_argument("-o", "--output")
-       .help("Define output type of simulation.")
-       .default_value(std::string{"ascii"})
-       .choices("ascii", "raw", "svg", "dummy");
+   args.add_argument("-f", "--format")
+       .help("Define output fromat of simulation.")
+       .default_value(std::string{"assembly"})
+       .choices("ascii", "raw", "svg", "dummy", "assembly");
+
+   args.add_argument("--silent")
+       .help("Print only necessary outputs")
+       .default_value(false)
+       .implicit_value(true);
 
    // parse args
    try {
@@ -49,22 +59,26 @@ int main(int argc, char *argv[])
    }
 
    auto sdcAsmFile = args.get<std::string>("sdcasm");
-   auto outputType = args.get<std::string>("-o");
+   auto outputType = args.get<std::string>("-f");
+   bool silent     = args["--silent"] == true;
 
 
-   std::vector<std::vector<Molecule*>> instructions;
-   std::vector<Register*>              registers;
-   std::vector<std::string>            dictionary;
+   std::vector<std::vector<Molecule*>>              instructions;
+   std::vector<Register*>                           registers;
+   std::vector<std::string>                         dictionary;
+   std::vector<std::pair<std::string, std::string>> macros;
 
    //parse assembly file
-   assembly::parse(sdcAsmFile.c_str(), registers, instructions, dictionary);
+   assembly::parse(sdcAsmFile.c_str(), registers, instructions, dictionary, macros);
 
-   std::cout << "--------------------------------\n";
-   std::cout << "|       INITAL REGISTERS       |\n";
-   std::cout << "--------------------------------\n";
-   std::cout << '\n';
+   if (!silent) {
+      std::cout << "--------------------------------\n";
+      std::cout << "|       INITAL REGISTERS       |\n";
+      std::cout << "--------------------------------\n";
+      std::cout << '\n';
+   }
 
-   printRegisters(registers, dictionary, outputType);
+   printRegisters(registers, dictionary, outputType, macros);
 
    // apply instruction
    for (auto &instruction : instructions) {
@@ -72,13 +86,15 @@ int main(int argc, char *argv[])
          reg->applyInstruction(instruction);
       }
 
-      std::cout << '\n';
-      std::cout << "--------------------------------\n";
-      std::cout << "|         INSTRUCTION          |\n";
-      std::cout << "--------------------------------\n";
-      std::cout << '\n';
+      if (!silent) {
+         std::cout << '\n';
+         std::cout << "--------------------------------\n";
+         std::cout << "|         INSTRUCTION          |\n";
+         std::cout << "--------------------------------\n";
+         std::cout << '\n';
+      }
 
-      printRegisters(registers, dictionary, outputType);  
+      printRegisters(registers, dictionary, outputType, macros);  
    }
 
    //print output

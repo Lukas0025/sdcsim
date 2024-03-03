@@ -1,0 +1,4 @@
+{ABCDEFGHIJ}
+[AB]{CDEFGHIJ}
+[AB]{CD}[EF]{GHIJ}
+[AB]{CD}[EF]{GH}[IJ]

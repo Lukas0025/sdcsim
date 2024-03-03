@@ -1,0 +1,8 @@
+1011{F}
+1[ABC][DEABC].<H*>[DEABC].<H*>[DEF].<G*>
+1[ABC]{DEABCDEABCDEF}
+1[AB].<C*>{C}<C*>.[DE]{AB}[CDE]{AB}[CDE]{F}
+1[AB].<C*>{C}<C*>.[DE]{A}[BCD]{EA}[BCD]{EF}
+1[AB].<C*>{C}<C*>.[DE]00{F}
+1{AB}[CDE]00{F}
+1100{F}

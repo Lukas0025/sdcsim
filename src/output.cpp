@@ -4,6 +4,7 @@
 #include <cstring>
 
 #include "output.h"
+#include "assembly.h"
 
 #define DEBUG
 
@@ -12,7 +13,7 @@ namespace output {
     unsigned                   maxNameCache    = 0;
     std::vector<std::string>*  maxNameCachePtr = NULL;
 
-    inline unsigned getMaxName(std::vector<std::string> &names) {
+    unsigned getMaxName(std::vector<std::string> &names) {
         if (maxNameCachePtr != &names) {
             maxNameCache = 1;
 
@@ -24,15 +25,15 @@ namespace output {
         return maxNameCache;
     }
 
-    inline bool isLast(Atom* a) {
+    bool isLast(Atom* a) {
         return a == a->strand->getAtom(a->strand->length() - 1);
     }
 
-    inline bool isFirst(Atom *a) {
+    bool isFirst(Atom *a) {
         return a->strand->getAtom(0) == a;
     }
 
-    inline bool isFirstBinded(Atom* a) {
+    bool isFirstBinded(Atom* a) {
         return a->strand->getAtom(0) == a                                || 
                a[-1].partner == NULL                                     ||
                a[-1].partner->partner == NULL                            ||
@@ -40,7 +41,7 @@ namespace output {
                a[-1].partner->strand != a->partner->strand;
     }
 
-    inline bool isLastBinded(Atom* a) {
+    bool isLastBinded(Atom* a) {
         return a->strand->getAtom(a->strand->length() - 1) == a          ||
                a[1].partner == NULL                                      ||
                a[1].partner->partner == NULL                             ||
@@ -61,7 +62,7 @@ namespace output {
 
     }
 
-    inline std::string getName(DOMAIN_DT val, std::vector<std::string> &names) {
+    std::string getName(DOMAIN_DT val, std::vector<std::string> &names) {
 
         const char* complement = IS_COMPLEMENTARY(val) ? "*" : " ";
 
@@ -76,6 +77,17 @@ namespace output {
         for (unsigned i = padName.length(); i < getMaxName(names); i++) {
             padName += " ";
         }
+
+        return padName + std::string(complement);
+    }
+
+    std::string getNameShort(DOMAIN_DT val, std::vector<std::string> &names) {
+
+        const char* complement = IS_COMPLEMENTARY(val) ? "*" : "";
+
+        if (IS_COMPLEMENTARY(val)) val = ~val;
+
+        std::string padName = names.at(val);
 
         return padName + std::string(complement);
     }
@@ -199,6 +211,17 @@ namespace output {
 
             std::cout << '\n';
         }
+    }
+
+    void assemblyPrint(Molecule &molecule, char* space, std::vector<std::string> &names, std::vector<std::pair<std::string, std::string>> &macros) {
+        std::string smol = assembly::createAssembly(&molecule, names);
+
+        //repace macros
+        for (auto &macro : macros) {
+            assembly::replaceAll(smol, macro.second, macro.first);
+        }
+
+        std::cout << smol;
     }
 
     void asciiPrint(Molecule &molecule, char* space, std::vector<std::string> &names) {
