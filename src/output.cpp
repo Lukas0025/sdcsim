@@ -5,6 +5,7 @@
 
 #include "output.h"
 #include "assembly.h"
+#include "svg.h"
 
 #define DEBUG
 
@@ -345,5 +346,27 @@ namespace output {
             std::cout << '\n';
         }
 
+    }
+
+    void svgPrint(Molecule &molecule, std::vector<std::string> &names) {
+
+        auto svg        = Svg(20, 6, 20, names);
+        auto mainStrand = molecule.getStrand(0);
+
+        for (unsigned i = 0; i < mainStrand->length(); i++) {
+            auto atom = mainStrand->getAtom(i);
+
+            svg.bottom(i, atom->domain.get());
+
+            if (atom->partner != NULL && atom->partner != multiAtom) {
+
+                svg.upper(i, atom->domain.get());
+
+                if (isLast(atom->partner)) svg.upperEnd(i, atom->domain.get());
+
+            }
+        }
+
+        std::cout << svg.get();
     }
 }

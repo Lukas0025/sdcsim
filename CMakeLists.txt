@@ -37,6 +37,7 @@ add_library(project_lib
     src/output.cpp
     src/assembly.cpp
     src/register.cpp
+    src/svg.cpp
 )
 
 # Add an executable

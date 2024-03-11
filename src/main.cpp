@@ -26,6 +26,11 @@ inline void printRegisters(std::vector<Register*> &registers, std::vector<std::s
          output::assemblyPrint(*reg->get(), "", dictionary, macros);
          std::cout << '\n';
       }
+   } else if (outputType == "svg") {
+      for (auto &reg : registers) {
+         output::svgPrint(*reg->get(), dictionary);
+         std::cout << '\n';
+      }
    }
 }
 
