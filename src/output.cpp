@@ -93,7 +93,7 @@ namespace output {
         return padName + std::string(complement);
     }
 
-    std::string rawSubPrint(Strand* strand, char* space, std::vector<std::string> &names, unsigned bindedAt, unsigned &negativePad) {
+    std::string rawSubPrint(Strand* strand, const char* space, std::vector<std::string> &names, unsigned bindedAt, unsigned &negativePad) {
         std::string str = std::string("");
         int link = -1;
         
@@ -131,7 +131,7 @@ namespace output {
         return str;
     }
 
-    void rawPrint(Molecule &molecule, char* space, std::vector<std::string> &names) {
+    void rawPrint(Molecule &molecule, const char* space, std::vector<std::string> &names) {
         std::vector<std::string> displayString;
         std::vector<unsigned> paddingSizes;
 
@@ -190,7 +190,7 @@ namespace output {
 
     }
 
-    void dummyPrint(Molecule &molecule, char* space, std::vector<std::string> &names) {
+    void dummyPrint(Molecule &molecule, const char* space, std::vector<std::string> &names) {
 
         for (unsigned iS = 0; iS < molecule.size(); iS++) {
             
@@ -214,7 +214,7 @@ namespace output {
         }
     }
 
-    void assemblyPrint(Molecule &molecule, char* space, std::vector<std::string> &names, std::vector<std::pair<std::string, std::string>> &macros) {
+    void assemblyPrint(Molecule &molecule, const char* space, std::vector<std::string> &names, std::vector<std::pair<std::string, std::string>> &macros) {
         std::string smol = assembly::createAssembly(&molecule, names);
 
         //repace macros
@@ -225,7 +225,7 @@ namespace output {
         std::cout << smol;
     }
 
-    void asciiPrint(Molecule &molecule, char* space, std::vector<std::string> &names) {
+    void asciiPrint(Molecule &molecule, const char* space, std::vector<std::string> &names) {
         std::vector<std::string> displayString;
 
         auto mainStrand = molecule.getStrand(0);
@@ -348,9 +348,8 @@ namespace output {
 
     }
 
-    void svgPrint(Molecule &molecule, std::vector<std::string> &names) {
+    void svgPrint(Molecule &molecule, std::vector<std::string> &names, Svg &svg) {
 
-        auto svg        = Svg(20, 6, 20, names);
         auto mainStrand = molecule.getStrand(0);
 
         for (unsigned i = 0; i < mainStrand->length(); i++) {
@@ -360,13 +359,58 @@ namespace output {
 
             if (atom->partner != NULL && atom->partner != multiAtom) {
 
-                svg.upper(i, atom->domain.get());
+                const auto partner = atom->partner;
+                const auto first   = partner->strand->getAtom(0);
+                const auto last    = partner->strand->getAtom(partner->strand->length() - 1);
 
-                if (isLast(atom->partner)) svg.upperEnd(i, atom->domain.get());
+                //if first binded?
+                //we need display pre strend
+                // \ < THIS
+                //  -
+                //  |
+                //  -
+                if (isFirstBinded(partner)) {
+                    auto     overhang = partner;
+                    int      pos      = i;
 
+                    while(overhang != first) {
+                        //iterate over over hang
+                        overhang = &(overhang[-1]);
+
+                        //calculate new pos
+                        pos    -= 1;
+
+                        svg.overHang(pos, i - pos, overhang->domain.get());
+                   }
+                }
+
+                svg.upper(i, partner->domain.get());
+                if (isLast(partner)) svg.upperEnd(i, partner->domain.get());
+
+
+                //if last binded?
+                //we need display post strend
+                //  / < THIS
+                // -
+                // |
+                // -
+                if (isLastBinded(partner)) {
+                    auto     overhang = partner;
+                    int      pos      = i;
+
+                    while(overhang != last) {
+                        //iterate over over hang
+                        overhang = &(overhang[1]);
+
+                        //calculate new pos
+                        pos += 1;
+
+                        svg.overHang(pos, i - pos, overhang->domain.get());
+                    }
+                }
             }
         }
 
-        std::cout << svg.get();
+        svg.regDone();
     }
 }
