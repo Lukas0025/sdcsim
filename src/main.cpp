@@ -67,7 +67,7 @@ int main(int argc, char *argv[])
    args.add_argument("-c", "--color")
        .help("Select color scheme for svg output")
        .default_value(std::string{"domain"})
-       .choices("domain", "chain");
+       .choices("domain", "chain", "black");
 
    args.add_argument("-b", "--break")
        .help("Break before instruction")
@@ -100,7 +100,10 @@ int main(int argc, char *argv[])
    bool decode     = args["-d"] == true;
    bool all        = args["-a"] == true;
    bool silent     = args["--silent"] == true;
-   bool chainColor = args.get<std::string>("-c") == "chain";
+   uint8_t colorM  = CM_DOMAIN;
+
+   if (args.get<std::string>("-c") == "chain") colorM  = CM_CHAIN;
+   if (args.get<std::string>("-c") == "black") colorM  = CM_BLACK;
 
 
    std::vector<std::vector<Molecule*>>              instructions;
@@ -111,7 +114,7 @@ int main(int argc, char *argv[])
    //parse assembly file
    assembly::parse(sdcAsmFile.c_str(), registers, instructions, dictionary, macros);
 
-   auto svg = Svg(18, 4, 12, chainColor, dictionary);
+   auto svg = Svg(18, 4, 12, colorM, dictionary);
 
    if (!silent && outputType != "svg") {
       std::cout << "---------------------------------\n";

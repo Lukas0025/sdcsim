@@ -37,7 +37,7 @@ const char* svgColors[] {
 
 const unsigned svgColorsCount = 31;
 
-Svg::Svg(int domainSize, int lineWidth, int domainHSpace, bool colorStrans, std::vector<std::string> &names) {
+Svg::Svg(int domainSize, int lineWidth, int domainHSpace, uint8_t colorMode, std::vector<std::string> &names) {
     this->code             = std::string("");
     this->domainSize       = domainSize;
     this->lineWidth        = lineWidth;
@@ -45,7 +45,7 @@ Svg::Svg(int domainSize, int lineWidth, int domainHSpace, bool colorStrans, std:
     this->yOffset          = lineWidth + 14;
     this->names            = &names;
     this->shortedNextUpper = true;
-    this->colorStrans      = colorStrans;
+    this->colorMode        = colorMode;
     this->absRegY          = 0;
     this->firstReg         = 0;
     this->absY             = 0;
@@ -86,7 +86,7 @@ void Svg::upper(int pos, DOMAIN_DT domain) {
     auto x1 = pos * this->domainSize;
     auto x2 = pos * this->domainSize + this->domainSize;
 
-    if (this->colorStrans && this->shortedNextUpper) this->lastColor++;
+    if (this->colorMode == CM_CHAIN && this->shortedNextUpper) this->lastColor++;
 
     auto color = this->getColorForDomain(domain);
 
@@ -111,7 +111,7 @@ void Svg::upperEnd(int pos, DOMAIN_DT domain) {
 
     this->shortedNextUpper = true;
 
-    if (this->colorStrans) {
+    if (this->colorMode == CM_CHAIN) {
         this->lastColor++;
     }
 }
@@ -121,7 +121,7 @@ void Svg::bottom(int pos, DOMAIN_DT domain) {
     auto x2 = pos * this->domainSize + this->domainSize;
 
     auto color = "black";
-    if (!this->colorStrans) {
+    if (!(this->colorMode == CM_CHAIN)) {
         color = this->getColorForDomain(domain);
     }
 
@@ -135,7 +135,7 @@ void Svg::overHang(int pos, int bindDistance, DOMAIN_DT domain) {
     if (bindDistance == -1) {
         this->shortedNextUpper = true;
     } else if (bindDistance == 1) {
-        if (this->colorStrans && this->shortedNextUpper) this->lastColor++;
+        if (this->colorMode == CM_CHAIN && this->shortedNextUpper) this->lastColor++;
         this->shortedNextUpper = false;
     }
 
@@ -167,8 +167,10 @@ const char* Svg::getColorForDomain(DOMAIN_DT domain) {
     // we not need information about complementary
     domain = IS_COMPLEMENTARY(domain) ? ~domain : domain;
 
-    if (this->colorStrans) {
+    if (this->colorMode == CM_CHAIN) {
         return svgColors[this->lastColor % svgColorsCount];
+    } else if (this->colorMode == CM_BLACK) {
+        return "black";
     }
 
     if (!this->colors.count(domain)) {

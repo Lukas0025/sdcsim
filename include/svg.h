@@ -4,12 +4,17 @@
 #include <map>
 #include "molecule.h"
 
+// Supported color modes
+#define CM_BLACK  0
+#define CM_DOMAIN 1
+#define CM_CHAIN  2
+
 extern const char* svgColors[];
 extern const unsigned svgColorsCount;
 
 class Svg {
     public:
-        Svg(int domainSize, int lineWidth, int domainHSpace, bool colorStrans, std::vector<std::string> &names);
+        Svg(int domainSize, int lineWidth, int domainHSpace, uint8_t colorStrans, std::vector<std::string> &names);
         ~Svg();
         void        line(int x1, int x2, int y1, int y2, const char* color, int width, bool dashed = false);
         void        text(int x, int y, int size, const char* text, const char* color = "", const char* transform = "");
@@ -42,8 +47,8 @@ class Svg {
         int firstReg;
 
         bool shortedNextUpper;
-        bool colorStrans;
-        bool colorDomains;
+        
+        uint8_t colorMode;
 
         std::vector<std::string> *names;
 };
