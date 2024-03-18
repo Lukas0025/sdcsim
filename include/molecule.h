@@ -21,7 +21,7 @@ class Molecule {
 
         void     donePairStrands(unsigned index, unsigned from, unsigned to);
         unsigned size();
-        void     finishDelete();
+        bool     finishDelete();
 
         void     unbindOfMultiple();
 

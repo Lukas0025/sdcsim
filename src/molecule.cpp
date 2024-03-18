@@ -53,7 +53,9 @@ void Molecule::remStrand(unsigned index) {
     this->strands->at(index)->del();
 }
 
-void Molecule::finishDelete() {
+bool Molecule::finishDelete() {
+    bool someDelete = false;
+
     for (int i = this->strands->size() - 1; i >= 0; i--) {
         if (this->strands->at(i)->isDeleted()) {
             //get lastest index
@@ -61,8 +63,12 @@ void Molecule::finishDelete() {
 
             //and remove last
             this->strands->pop_back();
+
+            someDelete = true;
         }
     }
+
+    return someDelete;
 }
 
 Strand* Molecule::getStrand(unsigned index) {

@@ -125,7 +125,7 @@ int main(int argc, char *argv[])
          std::cout << '\n';
 
          for (const auto& kv : nucleotides) {
-            std::cout << kv.first << " = " << kv.second->getStr() << std::endl;
+            std::cout << output::getNameShort(kv.first, dictionary) << " = " << kv.second->getStr() << std::endl;
          }
 
          std::cout << '\n';

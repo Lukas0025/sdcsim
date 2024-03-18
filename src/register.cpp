@@ -12,36 +12,47 @@ Molecule* Register::get() {
 
 void Register::applyInstruction(std::vector<Molecule*> instruction) {
     
-    for (unsigned i = 0; i < 100; i++) {
-        for (auto &inst : instruction) {
-            this->removeUnbinded(inst);
+    bool nucleotidesLevel = false;
+
+    if (!nucleotidesLevel) {
+        //domain level simulation
+
+        for (unsigned i = 0; i < 100; i++) {
+            for (auto &inst : instruction) {
+                this->removeUnbinded(inst);
+            }
+
+            auto preAddRegSize = this->reg->size();
+
+            for (auto &inst : instruction) {
+                this->doAllBinding(inst);
+            }
+
+            this->removeReplaced(preAddRegSize);
+
+            this->removeUnstable(preAddRegSize - 1);
+
+            for (unsigned i = 0; i < this->reg->size(); i++) {
+                this->reg->pairUncomplete(i);
+            }
+
+            this->removeUnstable(this->reg->size() - 1);
+
+            this->bindOfMultiple();
+
+            for (unsigned i = 0; i < this->reg->size(); i++) {
+                this->reg->pairUncomplete(i);
+            }
+
+            this->unbindOfMultiple();
+            
+            this->reg->finishDelete();
         }
+    } else {
+        // nucleotides level simulation
 
-        auto preAddRegSize = this->reg->size();
 
-        for (auto &inst : instruction) {
-            this->doAllBinding(inst);
-        }
 
-        this->removeReplaced(preAddRegSize);
-
-        this->removeUnstable(preAddRegSize - 1);
-
-        for (unsigned i = 0; i < this->reg->size(); i++) {
-            this->reg->pairUncomplete(i);
-        }
-
-        this->removeUnstable(this->reg->size() - 1);
-
-        this->bindOfMultiple();
-
-        for (unsigned i = 0; i < this->reg->size(); i++) {
-            this->reg->pairUncomplete(i);
-        }
-
-        this->unbindOfMultiple();
-        
-        this->reg->finishDelete();
     }
     
 }
