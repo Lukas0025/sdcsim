@@ -4,6 +4,15 @@
 # @date 18.02.2024
 #
 
+# define nucleotides reprezentation of domains
+domains:
+    A atcagccgggtgacatcatt
+    B cctttgtcgtaaattccgtg
+    C ggtgggcggtctgaaattgc
+    D ctggttgcgtgtacttcgag
+    E gggtcagtagtttcacacac
+    F gtcgacttaataactctgtg
+
 data:
     {ABCDEF}{ABCDEF}{ABCDEF}{ABCDEF}
 

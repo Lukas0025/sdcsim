@@ -13,6 +13,7 @@ namespace assembly {
     const std::regex whitespaceRegex  ("[\t\f ]+");
     const std::regex defineRegex      ("\n *define *: *");
     const std::regex dataRegex        ("\n *data *: *");
+    const std::regex domainRegex      ("\n *domains *: *");
     const std::regex instructionsRegex("\n *instructions *: *");
 
     void replaceAll(std::string& str, const std::string& from, const std::string& to) {
@@ -322,6 +323,75 @@ namespace assembly {
         return molecule;
     }
 
+    void parseDomains(std::string asmStr, std::map<DOMAIN_DT, Nucleotides*> &nucleotides, std::vector<std::string> &dictionary) {
+        std::smatch domains;
+        
+        std::regex_search(asmStr, domains, domainRegex);
+        
+        // for every domains
+        for (unsigned i = 0; i < domains.size(); ++i) {
+            // jump after label
+            auto pos = domains.position(i) + domains.length(i);
+
+            std::string left  = "";
+            std::string right = "";
+            bool isComment    = false;
+            uint part         = 0;
+
+            //ok now read char by char
+            for (unsigned i = pos; i < asmStr.length(); i++) {
+
+                if (asmStr[i] == '\n') {
+                    if (left.length() > 0) {
+                        left  = "";
+                        right = "";
+
+                        std::cout << "\n";
+                    }
+
+                    part = 0;
+                    isComment = false;
+                    continue;
+                }
+
+                if (isComment) continue;
+
+                if (asmStr[i] == ':') break; //new section 
+
+                if (asmStr[i] == '#') {
+                    isComment = true;
+                    continue;
+                }
+
+                if (asmStr[i] == ' ') {
+                    if (left.length() > 0) part++;
+
+                    continue;
+                }
+
+                if (part == 0) {
+                    left += asmStr[i];
+                    continue;
+                }
+
+                if (part == 1) {
+                    //find in dictionary
+                    auto dk = getKey(left, dictionary);
+
+                    if (!nucleotides.count(dk)) {
+                        nucleotides[dk] = new Nucleotides();
+                    }
+
+                    nucleotides[dk]->addFromStr(asmStr[i]);
+
+                    std::cout << asmStr[i];
+
+                    continue;
+                }
+            }
+        }
+    }
+
     void parseInstructions(std::string asmStr, std::vector<std::vector<Molecule*>> &instructions, std::vector<std::string> &dictionary) {
         std::smatch datas;
         
@@ -427,7 +497,7 @@ namespace assembly {
 
     }
 
-    void parse(const char* filename, std::vector<Register*> &registers, std::vector<std::vector<Molecule*>> &inst, std::vector<std::string> &dictionary, std::vector<std::pair<std::string, std::string>> &macros) {
+    void parse(const char* filename, std::vector<Register*> &registers, std::vector<std::vector<Molecule*>> &inst, std::vector<std::string> &dictionary, std::vector<std::pair<std::string, std::string>> &macros, std::map<DOMAIN_DT, Nucleotides*> &nucleotides) {
         //first open file
         std::ifstream asmFile(filename);
         
@@ -453,5 +523,8 @@ namespace assembly {
 
         // load instructions
         parseInstructions(asmStr, inst, dictionary);
+
+        // load nucleodies
+        parseDomains(asmStr, nucleotides, dictionary);
     }
 }

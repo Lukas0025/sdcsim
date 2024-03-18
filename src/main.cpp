@@ -110,13 +110,27 @@ int main(int argc, char *argv[])
    std::vector<Register*>                           registers;
    std::vector<std::string>                         dictionary;
    std::vector<std::pair<std::string, std::string>> macros;
+   std::map<DOMAIN_DT, Nucleotides*>                nucleotides;
 
    //parse assembly file
-   assembly::parse(sdcAsmFile.c_str(), registers, instructions, dictionary, macros);
+   assembly::parse(sdcAsmFile.c_str(), registers, instructions, dictionary, macros, nucleotides);
 
    auto svg = Svg(18, 4, 12, colorM, dictionary);
 
    if (!silent && outputType != "svg") {
+      if (outputType == "dummy") {
+         std::cout << "---------------------------------\n";
+         std::cout << "|             DOMAINS           |\n";
+         std::cout << "---------------------------------\n";
+         std::cout << '\n';
+
+         for (const auto& kv : nucleotides) {
+            std::cout << kv.first << " = " << kv.second->getStr() << std::endl;
+         }
+
+         std::cout << '\n';
+      }
+
       std::cout << "---------------------------------\n";
       std::cout << "|        INITAL REGISTERS       |\n";
       std::cout << "---------------------------------\n";
@@ -173,9 +187,13 @@ int main(int argc, char *argv[])
    }
 
    if (decode) {
-      std::cout << "----------- DECODED -------------\n";
+      if (outputType != "svg") {
+         std::cout << "----------- DECODED -------------\n";
 
-      printRegisters(registers, dictionary, "assembly", macros, svg, spaceing);
+         printRegisters(registers, dictionary, "assembly", macros, svg, spaceing);
+      } else {
+         //svg.println("Decoded:"); TBD
+      }
    }
 
    //print output

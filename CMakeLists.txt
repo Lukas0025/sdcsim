@@ -38,6 +38,7 @@ add_library(project_lib
     src/assembly.cpp
     src/register.cpp
     src/svg.cpp
+    src/nucleotides.cpp
 )
 
 # Add an executable
