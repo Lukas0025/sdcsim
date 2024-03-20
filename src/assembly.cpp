@@ -177,14 +177,14 @@ namespace assembly {
         return dictionary.size() - 1;
     }
 
-    Molecule* parseMolecule(std::string strMol, std::vector<std::string> &dictionary) {
+    Molecule* parseMolecule(std::string strMol, std::vector<std::string> &dictionary, std::map<DOMAIN_DT, Nucleotides*> *nucleotides) {
         bool up             = false;
         bool dbl            = false;
         bool down           = false;
         bool concat         = false;
         bool complement     = false;
 
-        auto mainStrend = new Strand();
+        auto mainStrend = new Strand(nucleotides);
 
         // first load only main strand
         for (unsigned i = 0; i < strMol.length(); i++) {
@@ -241,7 +241,7 @@ namespace assembly {
                         molecule->donePairStrands(id, bindStart - startPos, bindEnd - startPos);
                     }
 
-                    workStrand = new Strand();
+                    workStrand = new Strand(nucleotides);
                     startPos   = mainStrandPos;
                     bindStart  = NOT_BINDED;
                 }
@@ -254,7 +254,7 @@ namespace assembly {
                         molecule->donePairStrands(id, bindStart - startPos, bindEnd - startPos);
                     }
 
-                    workStrand = new Strand();
+                    workStrand = new Strand(nucleotides);
                     startPos   = mainStrandPos;
                 }
 
@@ -345,8 +345,6 @@ namespace assembly {
                     if (left.length() > 0) {
                         left  = "";
                         right = "";
-
-                        std::cout << "\n";
                     }
 
                     part = 0;
@@ -383,16 +381,14 @@ namespace assembly {
                     }
 
                     nucleotides[dk]->addFromStr(asmStr[i]);
-
-                    std::cout << asmStr[i];
-
+                    
                     continue;
                 }
             }
         }
     }
 
-    void parseInstructions(std::string asmStr, std::vector<std::vector<Molecule*>> &instructions, std::vector<std::string> &dictionary) {
+    void parseInstructions(std::string asmStr, std::vector<std::vector<Molecule*>> &instructions, std::vector<std::string> &dictionary, std::map<DOMAIN_DT, Nucleotides*> &nucleotides) {
         std::smatch datas;
         
         std::regex_search(asmStr, datas, instructionsRegex);
@@ -412,7 +408,7 @@ namespace assembly {
 
                 if (asmStr[i] == '\n') {
                     if (reading.length() > 0) {
-                        molecules.push_back(parseMolecule(reading, dictionary));
+                        molecules.push_back(parseMolecule(reading, dictionary, &nucleotides));
                     }
 
                     reading = "";
@@ -438,7 +434,7 @@ namespace assembly {
                 if (asmStr[i] == ' ') {
 
                     if (reading.length() > 0) {
-                        molecules.push_back(parseMolecule(reading, dictionary));
+                        molecules.push_back(parseMolecule(reading, dictionary, &nucleotides));
                         reading = "";
                     }
 
@@ -451,7 +447,7 @@ namespace assembly {
 
     }
 
-    void parseData(std::string asmStr, std::vector<Register*> &registers, std::vector<std::string> &dictionary) {
+    void parseData(std::string asmStr, std::vector<Register*> &registers, std::vector<std::string> &dictionary, std::map<DOMAIN_DT, Nucleotides*> &nucleotides) {
         std::smatch datas;
         
         std::regex_search(asmStr, datas, dataRegex);
@@ -469,7 +465,7 @@ namespace assembly {
 
                 if (asmStr[i] == '\n') {
                     if (reading.length() > 0) {
-                        registers.push_back(new Register(parseMolecule(reading, dictionary)));
+                        registers.push_back(new Register(parseMolecule(reading, dictionary, &nucleotides)));
 
                         reading = "";
                     }
@@ -518,13 +514,13 @@ namespace assembly {
             replaceAll(asmStr, macro.first, macro.second);
         }
 
-        // load registers
-        parseData(asmStr, registers, dictionary);
-
-        // load instructions
-        parseInstructions(asmStr, inst, dictionary);
-
         // load nucleodies
         parseDomains(asmStr, nucleotides, dictionary);
+
+        // load registers
+        parseData(asmStr, registers, dictionary, nucleotides);
+
+        // load instructions
+        parseInstructions(asmStr, inst, dictionary, nucleotides);
     }
 }

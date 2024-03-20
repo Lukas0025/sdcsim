@@ -64,6 +64,11 @@ int main(int argc, char *argv[])
        .default_value(false)
        .implicit_value(true);
 
+   args.add_argument("-n", "--nucleotides")
+       .help("Run sumulation on nucleotides level")
+       .default_value(false)
+       .implicit_value(true);
+
    args.add_argument("-c", "--color")
        .help("Select color scheme for svg output")
        .default_value(std::string{"domain"})
@@ -92,15 +97,16 @@ int main(int argc, char *argv[])
       std::exit(1);
    }
 
-   auto sdcAsmFile = args.get<std::string>("sdcasm");
-   auto outputType = args.get<std::string>("-f");
-   auto spaceing   = (args.get<std::string>("-s")).c_str();
-   auto breakAt    = args.get<int>("-b");
-   auto time       = args.get<int>("-t");
-   bool decode     = args["-d"] == true;
-   bool all        = args["-a"] == true;
-   bool silent     = args["--silent"] == true;
-   uint8_t colorM  = CM_DOMAIN;
+   auto sdcAsmFile     = args.get<std::string>("sdcasm");
+   auto outputType     = args.get<std::string>("-f");
+   auto spaceing       = (args.get<std::string>("-s")).c_str();
+   auto breakAt        = args.get<int>("-b");
+   auto time           = args.get<int>("-t");
+   bool decode         = args["-d"] == true;
+   bool all            = args["-a"] == true;
+   bool silent         = args["--silent"] == true;
+   bool nucleotidesSim = args["-n"] == true;
+   uint8_t colorM      = CM_DOMAIN;
 
    if (args.get<std::string>("-c") == "chain") colorM  = CM_CHAIN;
    if (args.get<std::string>("-c") == "black") colorM  = CM_BLACK;
@@ -118,23 +124,28 @@ int main(int argc, char *argv[])
    auto svg = Svg(18, 4, 12, colorM, dictionary);
 
    if (!silent && outputType != "svg") {
-      if (outputType == "dummy") {
-         std::cout << "---------------------------------\n";
-         std::cout << "|             DOMAINS           |\n";
-         std::cout << "---------------------------------\n";
-         std::cout << '\n';
+      
+      std::cout << "---------------------------------\n";
+      std::cout << "|             DOMAINS           |\n";
+      std::cout << "---------------------------------\n";
+      std::cout << '\n';
 
-         for (const auto& kv : nucleotides) {
-            std::cout << output::getNameShort(kv.first, dictionary) << " = " << kv.second->getStr() << std::endl;
-         }
-
-         std::cout << '\n';
+      for (const auto& kv : nucleotides) {
+         std::cout << output::getNameShort(kv.first, dictionary) << " = " << kv.second->getStr() << std::endl;
       }
+
+      std::cout << '\n';
 
       std::cout << "---------------------------------\n";
       std::cout << "|        INITAL REGISTERS       |\n";
       std::cout << "---------------------------------\n";
       std::cout << '\n';
+   }
+
+   if (nucleotidesSim) {
+      for (auto &reg : registers) {
+         reg->enableNucleotidesLevel(nucleotides);
+      }
    }
 
    printRegisters(registers, dictionary, outputType, macros, svg, spaceing);

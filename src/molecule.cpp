@@ -2,14 +2,94 @@
 #include "molecule.h"
 #include <iostream>
 
+#define NO_PAIR -1
+
 Molecule::Molecule(Strand *strand) {
     this->strands = new std::vector<Strand*>;
+    
+    this->nucleotides         = new std::vector<std::vector<NUCLEOTIDE_DT>>;
+    this->nucleotidesBindings = new std::vector<std::vector<int>>;
+    this->nucleotides2domain  = new std::vector<Strand*>;
+    
     this->strands->push_back(strand);
 }
 
 Molecule::~Molecule() {
     delete this->strands;
 }
+
+void Molecule::createNucleotidesLevel(std::map<DOMAIN_DT, Nucleotides*> &nucleotides) { // convert current reprezetation to nucleodies level
+    // Create map 
+    // for performance
+    std::map<Strand*, int> strandsMap;
+    for (unsigned i = 0; i < this->size(); i++) {
+        strandsMap[this->getStrand(i)] = i;
+    }
+
+    for (unsigned i = 0; i < this->size(); i++) {
+        auto strand   = this->getStrand(i);
+        
+        std::vector<NUCLEOTIDE_DT> strandN;
+        std::vector<int>           bindings;
+
+        for (unsigned j = 0; j < strand->length(); j++) {
+            auto atom = strand->getAtom(j);
+
+            if (!nucleotides.count(NORMALIZE_DOMAIN(atom->domain.get()))) std::cout << "error no domain for " << NORMALIZE_DOMAIN(atom->domain.get()) << "\n";
+
+            auto nuc = nucleotides[NORMALIZE_DOMAIN(atom->domain.get())];
+            
+            bool complementary = IS_COMPLEMENTARY(atom->domain.get());
+            unsigned partner   = HAVE_PARTNER(atom) ? strandsMap[atom->partner->strand]  : NO_PAIR;
+            unsigned pos       = HAVE_PARTNER(atom) ? atom->partner->offsetN    : j;
+
+            for (unsigned k = 0; k < nuc->length(); k++) {
+                strandN.push_back(complementary ? ~nuc->get(k) : nuc->get(k));
+                bindings.push_back(partner);
+                bindings.push_back(pos + k);
+            }
+        }
+
+        this->nucleotides->push_back(strandN);
+        this->nucleotidesBindings->push_back(bindings);
+        this->nucleotides2domain->push_back(strand);
+    }
+}
+
+void Molecule::addNucleotidesFreeStrand(Strand* strand, unsigned density, std::map<DOMAIN_DT, Nucleotides*> &nucleotides) {
+    for (unsigned i = 0; i < density; i++) {
+        
+        std::vector<NUCLEOTIDE_DT> strandN;
+        std::vector<int>           bindings;
+
+        for (unsigned j = 0; j < strand->length(); j++) {
+            auto atom = strand->getAtom(j);
+
+            if (!nucleotides.count(NORMALIZE_DOMAIN(atom->domain.get()))) std::cout << "error no domain for " << NORMALIZE_DOMAIN(atom->domain.get()) << "\n";
+
+            auto nuc           = nucleotides[NORMALIZE_DOMAIN(atom->domain.get())];
+            bool complementary = IS_COMPLEMENTARY(atom->domain.get());
+
+            for (unsigned k = 0; k < nuc->length(); k++) {
+                strandN.push_back(complementary ? ~nuc->get(k) : nuc->get(k));
+                bindings.push_back(NO_PAIR);
+                bindings.push_back(j + k);
+            }
+        }
+
+        this->nucleotides->push_back(strandN);
+        this->nucleotidesBindings->push_back(bindings);
+        this->nucleotides2domain->push_back(strand);
+    }
+}
+
+void Molecule::updateDomainLevel() {      // convert current reprezentation to domain level
+
+}
+
+/*void Molecule::simulate() {
+
+}*/
 
 unsigned Molecule::addStrand(Strand *strand, int bindFrom) {
     unsigned mainBindFrom   = bindFrom;

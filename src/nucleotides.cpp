@@ -14,6 +14,14 @@ void Nucleotides::add(NUCLEOTIDE_DT na) {
     this->strand->push_back(na);
 }
 
+unsigned Nucleotides::length() {
+    return this->strand->size();
+}
+
+NUCLEOTIDE_DT Nucleotides::get(unsigned pos) {
+    return this->strand->at(pos);
+}
+
 void Nucleotides::addFromStr(char na) {
     if        (na == 'A' || na == 'a') {
         return this->add(ADENINE);

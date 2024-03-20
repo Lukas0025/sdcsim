@@ -4,17 +4,21 @@
 
 Register::Register(Molecule *init) {
     this->reg = init;
+    this->nucleotidesSim = false;
 }
 
 Molecule* Register::get() {
     return this->reg;
 }
 
-void Register::applyInstruction(std::vector<Molecule*> instruction) {
-    
-    bool nucleotidesLevel = false;
+void Register::enableNucleotidesLevel(std::map<DOMAIN_DT, Nucleotides*> &nucleotides) {
+    this->reg->createNucleotidesLevel(nucleotides);
+    this->nucleotidesSim = true;
+}
 
-    if (!nucleotidesLevel) {
+void Register::applyInstruction(std::vector<Molecule*> instruction) {
+
+    if (!this->nucleotidesSim) {
         //domain level simulation
 
         for (unsigned i = 0; i < 100; i++) {

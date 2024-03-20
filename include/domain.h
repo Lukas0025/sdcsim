@@ -5,6 +5,7 @@
 
 #define DOMAIN_DT uint16_t
 #define IS_COMPLEMENTARY(X) (X > (USHRT_MAX >> 1))
+#define NORMALIZE_DOMAIN(X) (IS_COMPLEMENTARY(X) ? ~X : X)
 
 class Domain {
     public:

@@ -23,9 +23,14 @@ class Molecule {
         unsigned size();
         bool     finishDelete();
 
-        void     unbindOfMultiple();
+        void     createNucleotidesLevel(std::map<DOMAIN_DT, Nucleotides*> &nucleotides);
+        void     addNucleotidesFreeStrand(Strand* strand, unsigned desity, std::map<DOMAIN_DT, Nucleotides*> &nucleotides);
+        void     updateDomainLevel();
 
     private:
         std::vector<Strand*>* strands;
+        std::vector<std::vector<NUCLEOTIDE_DT>>* nucleotides;
+        std::vector<std::vector<int>>*           nucleotidesBindings;
+        std::vector<Strand*>*                    nucleotides2domain;
 
 };

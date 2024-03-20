@@ -9,6 +9,7 @@ class Register {
         Molecule* get();
 
         void applyInstruction(std::vector<Molecule*> instruction);
+        void enableNucleotidesLevel(std::map<DOMAIN_DT, Nucleotides*> &nucleotides);
 
     private:
         void doAllBinding(Molecule* mol);
@@ -19,4 +20,6 @@ class Register {
         void bindOfMultiple();
 
         Molecule *reg; // molecule reprezenting register
+
+        bool nucleotidesSim;
 };

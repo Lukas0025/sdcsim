@@ -4,20 +4,25 @@ class Strand;
 
 #include <vector>
 #include "domain.h"
+#include "nucleotides.h"
+#include <map>
 #include <cstddef>
+
+#define HAVE_PARTNER(X) (X->partner != NULL && X->partner != multiAtom)
 
 typedef struct atom_ {
     Domain         domain;
     struct atom_*  partner;
     Strand*        strand;
     int            partnersCount;
+    unsigned       offsetN;
 } Atom;
 
 extern Atom* multiAtom;
 
 class Strand {
     public:
-        Strand();
+        Strand(std::map<DOMAIN_DT, Nucleotides*> *nucleotides = NULL);
         ~Strand();
 
         Strand* copy();
@@ -39,5 +44,7 @@ class Strand {
         
         bool readOnly;
         bool deleted;
+
+        std::map<DOMAIN_DT, Nucleotides*> *nucleotides;
 
 };

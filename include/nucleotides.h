@@ -24,9 +24,22 @@ class Nucleotides {
         void addFromStr(char na);
         void add(NUCLEOTIDE_DT na);
 
+        unsigned length();
+        NUCLEOTIDE_DT get(unsigned pos);
+
         static float bindPower(NUCLEOTIDE_DT na1, NUCLEOTIDE_DT na2);
 
         std::string getStr();
+
+        Nucleotides operator~() {
+            auto nuc = Nucleotides();
+
+            for (const auto& val : *(this->strand)) {
+                nuc.add(~val);
+            }
+
+            return nuc;
+        }
 
     private:
         std::vector<NUCLEOTIDE_DT>* strand;

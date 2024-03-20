@@ -6,10 +6,11 @@
 Atom multiAtomStack = {0, NULL, NULL, 0};
 Atom *multiAtom     = &multiAtomStack;
 
-Strand::Strand() {
-    this->atoms    = new std::vector<Atom>;
-    this->deleted  = false;
-    this->readOnly = false;
+Strand::Strand(std::map<DOMAIN_DT, Nucleotides*> *nucleotides) {
+    this->atoms       = new std::vector<Atom>;
+    this->deleted     = false;
+    this->readOnly    = false;
+    this->nucleotides = nucleotides;
 }
 
 Strand::~Strand() {
@@ -27,7 +28,7 @@ Atom* Strand::getAtom(unsigned index) {
 }
 
 Strand* Strand::copy() {
-    auto str = new Strand();
+    auto str = new Strand(this->nucleotides);
 
     for (auto &atom : *this->atoms) {
         str->addDomain(atom.domain);   
@@ -50,6 +51,14 @@ unsigned Strand::addDomain(Domain d) {
     }
 
     auto atom = this->createAtom(d);
+
+    if (this->atoms->size() > 0 && this->nucleotides != NULL) {
+        auto last = (*this->atoms)[this->atoms->size() - 1];
+
+        if (this->nucleotides->count(NORMALIZE_DOMAIN(last.domain.get()))) {
+            atom.offsetN = last.offsetN + ((*(this->nucleotides))[NORMALIZE_DOMAIN(last.domain.get())])->length();
+        }
+    }
 
     this->atoms->push_back(atom);
 
@@ -85,7 +94,7 @@ void Strand::complementaryLast() {
 }
 
 Atom Strand::createAtom(Domain d) {
-    Atom a = {d, NULL, this, 0};
+    Atom a = {d, NULL, this, 0, 0};
 
     return a;
 }
