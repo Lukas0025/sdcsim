@@ -14,4 +14,4 @@ data:
     [AB]{C}
 
 instructions:
-    {A*B*C*} {E*F*} # set EF and ABC Sticker
+    {A*B*C*}

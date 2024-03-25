@@ -9,7 +9,7 @@ class Register {
         Molecule* get();
 
         void applyInstruction(std::vector<Molecule*> instruction);
-        void enableNucleotidesLevel(std::map<DOMAIN_DT, Nucleotides*> &nucleotides);
+        void enableNucleotidesLevel(std::map<DOMAIN_DT, Nucleotides*> &nucleotides, float temp);
 
     private:
         void doAllBinding(Molecule* mol);
@@ -22,4 +22,6 @@ class Register {
         Molecule *reg; // molecule reprezenting register
 
         bool nucleotidesSim;
+        float temp;
+        std::map<DOMAIN_DT, Nucleotides*>* nucleotides;
 };

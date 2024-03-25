@@ -21,7 +21,7 @@ class Nucleotides {
         Nucleotides();
         ~Nucleotides();
 
-        void addFromStr(char na);
+        void addFromStr(char na, bool complementary = false);
         void add(NUCLEOTIDE_DT na);
 
         unsigned length();
@@ -40,6 +40,10 @@ class Nucleotides {
 
             return nuc;
         }
+
+        float ReDeNaturationP(Nucleotides* partner, float temp);
+        float deltaH(Nucleotides* partner);
+        float deltaS(Nucleotides* partner);
 
     private:
         std::vector<NUCLEOTIDE_DT>* strand;

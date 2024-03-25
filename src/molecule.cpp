@@ -1,16 +1,13 @@
 #include <cstddef>
 #include "molecule.h"
+#include <cstdlib>
 #include <iostream>
 
-#define NO_PAIR -1
+#define RANDOM_RANGE(TO)       (rand() % (TO))
+#define RANDOM_FLOAT()         ((float)rand()/(float)RAND_MAX)
 
 Molecule::Molecule(Strand *strand) {
-    this->strands = new std::vector<Strand*>;
-    
-    this->nucleotides         = new std::vector<std::vector<NUCLEOTIDE_DT>>;
-    this->nucleotidesBindings = new std::vector<std::vector<int>>;
-    this->nucleotides2domain  = new std::vector<Strand*>;
-    
+    this->strands = new std::vector<Strand*>;    
     this->strands->push_back(strand);
 }
 
@@ -18,78 +15,92 @@ Molecule::~Molecule() {
     delete this->strands;
 }
 
-void Molecule::createNucleotidesLevel(std::map<DOMAIN_DT, Nucleotides*> &nucleotides) { // convert current reprezetation to nucleodies level
-    // Create map 
-    // for performance
-    std::map<Strand*, int> strandsMap;
-    for (unsigned i = 0; i < this->size(); i++) {
-        strandsMap[this->getStrand(i)] = i;
+inline bool isPossibleToBind(Atom* iAtom, Atom* jAtom) {
+
+    bool status = jAtom->partner == NULL && iAtom->partner == NULL && iAtom->strand != jAtom->strand;
+
+    auto strand = iAtom->strand;
+    int  diffN  = (int)(iAtom->offsetN) - jAtom->offsetN;
+
+    // now loop over chain and check if other is binded
+    for (unsigned i = 0; i < strand->length(); i++) {
+        auto atom = strand->getAtom(i);
+        
+        status = status && (atom->partner == NULL || atom->partner->strand != jAtom->strand || (int)(atom->offsetN - atom->partner->offsetN) == diffN);
     }
 
-    for (unsigned i = 0; i < this->size(); i++) {
-        auto strand   = this->getStrand(i);
-        
-        std::vector<NUCLEOTIDE_DT> strandN;
-        std::vector<int>           bindings;
+    return status;
 
-        for (unsigned j = 0; j < strand->length(); j++) {
-            auto atom = strand->getAtom(j);
+}
 
-            if (!nucleotides.count(NORMALIZE_DOMAIN(atom->domain.get()))) std::cout << "error no domain for " << NORMALIZE_DOMAIN(atom->domain.get()) << "\n";
+void Molecule::simulate(std::map<DOMAIN_DT, Nucleotides*> &nucleotides, float temp, std::vector<Molecule*> &instruction) {
+    // set random seed
+    srand((unsigned)time(NULL));
 
-            auto nuc = nucleotides[NORMALIZE_DOMAIN(atom->domain.get())];
-            
-            bool complementary = IS_COMPLEMENTARY(atom->domain.get());
-            unsigned partner   = HAVE_PARTNER(atom) ? strandsMap[atom->partner->strand]  : NO_PAIR;
-            unsigned pos       = HAVE_PARTNER(atom) ? atom->partner->offsetN    : j;
+    unsigned time = 100000;
 
-            for (unsigned k = 0; k < nuc->length(); k++) {
-                strandN.push_back(complementary ? ~nuc->get(k) : nuc->get(k));
-                bindings.push_back(partner);
-                bindings.push_back(pos + k);
-            }
+    while (time > 0) {
+
+        //select i and j strands
+        auto iStrand = this->getStrand(RANDOM_RANGE(this->size()));
+
+        // allow select from incomming
+        auto jSIndex = RANDOM_RANGE(this->size() + instruction.size());
+
+        // use incomming
+        if (jSIndex >= this->size()) {
+            auto newStrand = instruction.at(jSIndex - this->size())->getStrand(0)->copy();
+            jSIndex        = this->size();
+            this->strands->push_back(newStrand);
         }
 
-        this->nucleotides->push_back(strandN);
-        this->nucleotidesBindings->push_back(bindings);
-        this->nucleotides2domain->push_back(strand);
-    }
-}
+        auto jStrand = this->getStrand(jSIndex);
 
-void Molecule::addNucleotidesFreeStrand(Strand* strand, unsigned density, std::map<DOMAIN_DT, Nucleotides*> &nucleotides) {
-    for (unsigned i = 0; i < density; i++) {
-        
-        std::vector<NUCLEOTIDE_DT> strandN;
-        std::vector<int>           bindings;
+        //select i and j atom
+        auto iAtomId = RANDOM_RANGE(iStrand->length());
+        auto iAtom   = iStrand->getAtom(iAtomId);
 
-        for (unsigned j = 0; j < strand->length(); j++) {
-            auto atom = strand->getAtom(j);
+        auto jAtomId = RANDOM_RANGE(jStrand->length());
+        auto jAtom   = jStrand->getAtom(jAtomId);
 
-            if (!nucleotides.count(NORMALIZE_DOMAIN(atom->domain.get()))) std::cout << "error no domain for " << NORMALIZE_DOMAIN(atom->domain.get()) << "\n";
+        if (RANDOM_FLOAT() < 0.5) { // renaturation
+            if (nucleotides[iAtom->domain.get()]->ReDeNaturationP(nucleotides[jAtom->domain.get()], temp) > RANDOM_FLOAT()) {
+                if (isPossibleToBind(iAtom, jAtom)) {
+                    Strand::pairDomain(iAtom, jAtom);
 
-            auto nuc           = nucleotides[NORMALIZE_DOMAIN(atom->domain.get())];
-            bool complementary = IS_COMPLEMENTARY(atom->domain.get());
+                    //try bind other other parts if possible - this is created by energy of this creastion of pair
+                    for (unsigned i = 0; i <= std::min(iAtomId, jAtomId); i++) {
+                        iAtom   = iStrand->getAtom(iAtomId - i);
+                        jAtom   = jStrand->getAtom(jAtomId - i);
 
-            for (unsigned k = 0; k < nuc->length(); k++) {
-                strandN.push_back(complementary ? ~nuc->get(k) : nuc->get(k));
-                bindings.push_back(NO_PAIR);
-                bindings.push_back(j + k);
+                        if (!(nucleotides[iAtom->domain.get()]->ReDeNaturationP(nucleotides[jAtom->domain.get()], temp) > RANDOM_FLOAT())) break;
+
+                        if (iAtom->partner != NULL) {
+                            iAtom->partner->partner = NULL;
+                            iAtom->partner          = NULL;
+                        }
+
+                        if (jAtom->partner != NULL) {
+                            jAtom->partner->partner = NULL;
+                            jAtom->partner          = NULL;
+                        }
+
+                        Strand::pairDomain(iAtom, jAtom);   
+                    }
+
+                    /*for (unsigned i = iAtomId; i < iStrand->length(); i++) {
+                        
+                    }*/
+                }
             }
+        } else if (iAtom->partner != NULL && nucleotides[iAtom->domain.get()]->ReDeNaturationP(nucleotides[iAtom->partner->domain.get()], temp) < RANDOM_FLOAT()) {
+            iAtom->partner->partner = NULL;
+            iAtom->partner          = NULL;
         }
 
-        this->nucleotides->push_back(strandN);
-        this->nucleotidesBindings->push_back(bindings);
-        this->nucleotides2domain->push_back(strand);
+        time--;
     }
 }
-
-void Molecule::updateDomainLevel() {      // convert current reprezentation to domain level
-
-}
-
-/*void Molecule::simulate() {
-
-}*/
 
 unsigned Molecule::addStrand(Strand *strand, int bindFrom) {
     unsigned mainBindFrom   = bindFrom;

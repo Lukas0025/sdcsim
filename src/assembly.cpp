@@ -377,10 +377,12 @@ namespace assembly {
                     auto dk = getKey(left, dictionary);
 
                     if (!nucleotides.count(dk)) {
-                        nucleotides[dk] = new Nucleotides();
+                        nucleotides[dk]  = new Nucleotides();
+                        nucleotides[~dk] = new Nucleotides();
                     }
 
-                    nucleotides[dk]->addFromStr(asmStr[i]);
+                    nucleotides[dk] ->addFromStr(asmStr[i]);
+                    nucleotides[~dk]->addFromStr(asmStr[i], true);
                     
                     continue;
                 }

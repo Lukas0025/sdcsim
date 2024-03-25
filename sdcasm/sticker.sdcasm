@@ -1,0 +1,25 @@
+#
+# Sticker automaton implementation in DNA|SIMD
+# @autor Lukáš Plevač <xpleva07@vutbr.cz>
+# @date 03.03.2024
+#
+
+domains:
+    A atcagccgggtgacatcatt
+    B cctttgtcgtaaattccgtg
+    C ggtgggcggtctgaaattgc
+    D ctggttgcgtgtacttcgag
+    E gggtcagtagtttcacacac
+    F gtcgacttaataactctgtg
+    G uaguutcugggauatcaaug
+    H uagcgccauauuttctutut
+    I gggucguuatauggttuuuc
+    J ugauccacagaacggtgauu
+
+data:
+    {ABCDEFGHIJ}
+
+instructions:
+    {A*B*} # set AB bit on
+    {E*F*} # set EF bin on
+    {I*J*} # set IJ bin on

@@ -83,6 +83,11 @@ int main(int argc, char *argv[])
        .help("registr expose time to instruction")
        .scan<'i', int>()
        .default_value(INT_MAX);
+
+   args.add_argument("-T", "--temperature")
+       .help("temperature of solution")
+       .scan<'f', float>()
+       .default_value((float)25.0);
    
    args.add_argument("-s", "--spaceing")
        .help("Space char/s between domains in ascii formats")
@@ -102,6 +107,7 @@ int main(int argc, char *argv[])
    auto spaceing       = (args.get<std::string>("-s")).c_str();
    auto breakAt        = args.get<int>("-b");
    auto time           = args.get<int>("-t");
+   auto temp           = args.get<float>("-T");
    bool decode         = args["-d"] == true;
    bool all            = args["-a"] == true;
    bool silent         = args["--silent"] == true;
@@ -144,7 +150,7 @@ int main(int argc, char *argv[])
 
    if (nucleotidesSim) {
       for (auto &reg : registers) {
-         reg->enableNucleotidesLevel(nucleotides);
+         reg->enableNucleotidesLevel(nucleotides, temp);
       }
    }
 

@@ -11,9 +11,10 @@ Molecule* Register::get() {
     return this->reg;
 }
 
-void Register::enableNucleotidesLevel(std::map<DOMAIN_DT, Nucleotides*> &nucleotides) {
-    this->reg->createNucleotidesLevel(nucleotides);
+void Register::enableNucleotidesLevel(std::map<DOMAIN_DT, Nucleotides*> &nucleotides, float temp) {
     this->nucleotidesSim = true;
+    this->nucleotides    = &nucleotides;
+    this->temp           = temp;
 }
 
 void Register::applyInstruction(std::vector<Molecule*> instruction) {
@@ -54,9 +55,7 @@ void Register::applyInstruction(std::vector<Molecule*> instruction) {
         }
     } else {
         // nucleotides level simulation
-
-
-
+        this->reg->simulate(*(this->nucleotides), this->temp, instruction);
     }
     
 }
