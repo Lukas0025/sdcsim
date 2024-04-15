@@ -11,18 +11,19 @@ Molecule* Register::get() {
     return this->reg;
 }
 
-void Register::enableNucleotidesLevel(std::map<DOMAIN_DT, Nucleotides*> &nucleotides, float temp) {
+void Register::enableNucleotidesLevel(std::map<DOMAIN_DT, Nucleotides*> &nucleotides, float temp, int strands) {
     this->nucleotidesSim = true;
     this->nucleotides    = &nucleotides;
     this->temp           = temp;
+    this->strands_count  = strands;
 }
 
-void Register::applyInstruction(std::vector<Molecule*> instruction) {
+void Register::applyInstruction(std::vector<Molecule*> instruction, int time) {
 
     if (!this->nucleotidesSim) {
         //domain level simulation
 
-        for (unsigned i = 0; i < 100; i++) {
+        for (unsigned i = 0; i < time; i++) {
             for (auto &inst : instruction) {
                 this->removeUnbinded(inst);
             }
@@ -55,9 +56,40 @@ void Register::applyInstruction(std::vector<Molecule*> instruction) {
         }
     } else {
         // nucleotides level simulation
-        this->reg->simulate(*(this->nucleotides), this->temp, instruction);
+        //for (unsigned i = 0; i < 10; i++)
+        this->reg->simulate(*(this->nucleotides), this->temp, instruction, this->strands_count, time);
+
+        this->elution(*(this->nucleotides));
+
+        // remove all needed strands
+        this->reg->finishDelete();
     }
     
+}
+
+void Register::elution(std::map<DOMAIN_DT, Nucleotides*> &nucleotides) {
+    const float stableTrahHold = -100; // kCAL
+    const auto  strandZero     = this->reg->getStrand(0);
+
+    for (int i = this->reg->size() - 1; i >= 1; i--) {
+        auto  mainStrand = this->reg->getStrand(i);
+        float bindScore  = 0;
+        bool  notOnMain  = true;
+
+        // calculate bind score
+        for (int j = 0; j < mainStrand->length(); j++) {
+            if (mainStrand->getAtom(j)->partner != NULL &&
+                mainStrand->getAtom(j)->partner->partner == mainStrand->getAtom(j)) {
+                bindScore += nucleotides[mainStrand->getAtom(j)->domain.get()]->deltaH(nucleotides[mainStrand->getAtom(j)->partner->domain.get()]);
+                notOnMain &= strandZero != mainStrand->getAtom(j)->partner->strand;
+            }
+        }
+
+        //this do unbind?
+        if ((bindScore > stableTrahHold) || notOnMain) {
+            this->reg->remStrand(i);
+        }
+    }   
 }
 
 void Register::doAllBinding(Molecule* mol) {
@@ -144,9 +176,9 @@ void Register::removeUnstable(int to) {
         unsigned bindScore  = 0;
 
         // calculate bind score
-        for (int i = 0; i < mainStrand->length(); i++) {
-            if (mainStrand->getAtom(i)->partner != NULL &&
-                mainStrand->getAtom(i)->partner->partner == mainStrand->getAtom(i)) {
+        for (int j = 0; j < mainStrand->length(); j++) {
+            if (mainStrand->getAtom(j)->partner != NULL &&
+                mainStrand->getAtom(j)->partner->partner == mainStrand->getAtom(j)) {
                 bindScore++;
             } else {
                 bindScore = 0;

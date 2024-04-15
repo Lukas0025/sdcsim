@@ -32,6 +32,10 @@ test: cmake
 	done
 	@echo "[info] All tests PASS \e[33m ^_^ \e[39m"
 
+plots: cmake
+	cd plots && \
+	./make.sh
+
 clean:
 	rm -rf build
 	rm -rf debug_build

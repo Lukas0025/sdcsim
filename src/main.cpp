@@ -5,6 +5,7 @@
 #include "output.h"
 #include "register.h"
 #include "svg.h"
+#include "error.h"
 
 inline void printRegisters(std::vector<Register*> &registers, std::vector<std::string> &dictionary, const std::string &outputType, std::vector<std::pair<std::string, std::string>> &macros, Svg &svg, const char* space) {
    if (outputType == "ascii") {
@@ -82,7 +83,12 @@ int main(int argc, char *argv[])
    args.add_argument("-t", "--time")
        .help("registr expose time to instruction")
        .scan<'i', int>()
-       .default_value(INT_MAX);
+       .default_value(999999);
+
+   args.add_argument("-S", "--strands")
+       .help("Number of inserted instruction strand copies")
+       .scan<'i', int>()
+       .default_value(100);
 
    args.add_argument("-T", "--temperature")
        .help("temperature of solution")
@@ -107,6 +113,7 @@ int main(int argc, char *argv[])
    auto spaceing       = (args.get<std::string>("-s")).c_str();
    auto breakAt        = args.get<int>("-b");
    auto time           = args.get<int>("-t");
+   auto strands_count  = args.get<int>("-S");
    auto temp           = args.get<float>("-T");
    bool decode         = args["-d"] == true;
    bool all            = args["-a"] == true;
@@ -127,20 +134,29 @@ int main(int argc, char *argv[])
    //parse assembly file
    assembly::parse(sdcAsmFile.c_str(), registers, instructions, dictionary, macros, nucleotides);
 
+   //if nucleotides level simulation check if we have all domains
+   if (nucleotidesSim) {
+      for (DOMAIN_DT i = 0; i < dictionary.size(); i++) {
+         if (nucleotides.count(i) == 0) error::nucleotideLevelNotDefine();
+      }  
+   }
+
    auto svg = Svg(18, 4, 12, colorM, dictionary);
 
    if (!silent && outputType != "svg") {
       
-      std::cout << "---------------------------------\n";
-      std::cout << "|             DOMAINS           |\n";
-      std::cout << "---------------------------------\n";
-      std::cout << '\n';
+      if (nucleotidesSim) {
+         std::cout << "---------------------------------\n";
+         std::cout << "|             DOMAINS           |\n";
+         std::cout << "---------------------------------\n";
+         std::cout << '\n';
 
-      for (const auto& kv : nucleotides) {
-         std::cout << output::getNameShort(kv.first, dictionary) << " = " << kv.second->getStr() << std::endl;
+         for (const auto& kv : nucleotides) {
+            std::cout << output::getNameShort(kv.first, dictionary) << " = " << kv.second->getStr() << std::endl;
+         }
+
+         std::cout << '\n';
       }
-
-      std::cout << '\n';
 
       std::cout << "---------------------------------\n";
       std::cout << "|        INITAL REGISTERS       |\n";
@@ -150,7 +166,7 @@ int main(int argc, char *argv[])
 
    if (nucleotidesSim) {
       for (auto &reg : registers) {
-         reg->enableNucleotidesLevel(nucleotides, temp);
+         reg->enableNucleotidesLevel(nucleotides, temp, strands_count);
       }
    }
 
@@ -171,7 +187,7 @@ int main(int argc, char *argv[])
       if (breakAt <= idInstruction) break;
 
       for (auto &reg : registers) {
-         reg->applyInstruction(instruction);
+         reg->applyInstruction(instruction, time);
       }
 
       if (all) {
@@ -190,8 +206,8 @@ int main(int argc, char *argv[])
       idInstruction++;
    }
 
-   if (!silent) {
-      if (outputType != "svg") {
+   if (!silent || !all) {
+      if (outputType != "svg" && !silent) {
          std::cout << '\n';
          std::cout << "---------------------------------\n";
          std::cout << "|             FINAL             |\n";
@@ -208,8 +224,6 @@ int main(int argc, char *argv[])
          std::cout << "----------- DECODED -------------\n";
 
          printRegisters(registers, dictionary, "assembly", macros, svg, spaceing);
-      } else {
-         //svg.println("Decoded:"); TBD
       }
    }
 

@@ -39,6 +39,7 @@ add_library(project_lib
     src/register.cpp
     src/svg.cpp
     src/nucleotides.cpp
+    src/error.cpp
 )
 
 # Add an executable

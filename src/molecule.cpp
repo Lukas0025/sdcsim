@@ -2,9 +2,10 @@
 #include "molecule.h"
 #include <cstdlib>
 #include <iostream>
+#include <random>
 
-#define RANDOM_RANGE(TO)       (rand() % (TO))
-#define RANDOM_FLOAT()         ((float)rand()/(float)RAND_MAX)
+#define RANDOM_RANGE(TO)       (mt() % (TO))
+#define RANDOM_FLOAT()         ((float)mt()/(float)mt.max())
 
 Molecule::Molecule(Strand *strand) {
     this->strands = new std::vector<Strand*>;    
@@ -33,28 +34,24 @@ inline bool isPossibleToBind(Atom* iAtom, Atom* jAtom) {
 
 }
 
-void Molecule::simulate(std::map<DOMAIN_DT, Nucleotides*> &nucleotides, float temp, std::vector<Molecule*> &instruction) {
+void Molecule::simulate(std::map<DOMAIN_DT, Nucleotides*> &nucleotides, float temp, std::vector<Molecule*> &instruction, unsigned strands_count, unsigned sim_time) {
     // set random seed
-    srand((unsigned)time(NULL));
+    std::mt19937 mt(time(nullptr)); 
 
-    unsigned time = 100000;
+    // insert instructions strands
+    for (unsigned i = 0; i < strands_count; i++) {
+        for (const auto &s : instruction) {
+            this->strands->push_back(s->getStrand(0)->copy());
+        }
+    }
 
-    while (time > 0) {
+    Atom* iAtomBack = NULL;
+    Atom* jAtomBack = NULL;
 
+    while (sim_time > 0) {
         //select i and j strands
         auto iStrand = this->getStrand(RANDOM_RANGE(this->size()));
-
-        // allow select from incomming
-        auto jSIndex = RANDOM_RANGE(this->size() + instruction.size());
-
-        // use incomming
-        if (jSIndex >= this->size()) {
-            auto newStrand = instruction.at(jSIndex - this->size())->getStrand(0)->copy();
-            jSIndex        = this->size();
-            this->strands->push_back(newStrand);
-        }
-
-        auto jStrand = this->getStrand(jSIndex);
+        auto jStrand = this->getStrand(RANDOM_RANGE(this->size()));
 
         //select i and j atom
         auto iAtomId = RANDOM_RANGE(iStrand->length());
@@ -62,43 +59,109 @@ void Molecule::simulate(std::map<DOMAIN_DT, Nucleotides*> &nucleotides, float te
 
         auto jAtomId = RANDOM_RANGE(jStrand->length());
         auto jAtom   = jStrand->getAtom(jAtomId);
-
+        
         if (RANDOM_FLOAT() < 0.5) { // renaturation
-            if (nucleotides[iAtom->domain.get()]->ReDeNaturationP(nucleotides[jAtom->domain.get()], temp) > RANDOM_FLOAT()) {
+            if (nucleotides[iAtom->domain.get()]->ReNaturationP(nucleotides[jAtom->domain.get()], temp) > RANDOM_FLOAT()) {
                 if (isPossibleToBind(iAtom, jAtom)) {
                     Strand::pairDomain(iAtom, jAtom);
-
-                    //try bind other other parts if possible - this is created by energy of this creastion of pair
-                    for (unsigned i = 0; i <= std::min(iAtomId, jAtomId); i++) {
-                        iAtom   = iStrand->getAtom(iAtomId - i);
-                        jAtom   = jStrand->getAtom(jAtomId - i);
-
-                        if (!(nucleotides[iAtom->domain.get()]->ReDeNaturationP(nucleotides[jAtom->domain.get()], temp) > RANDOM_FLOAT())) break;
-
-                        if (iAtom->partner != NULL) {
-                            iAtom->partner->partner = NULL;
-                            iAtom->partner          = NULL;
-                        }
-
-                        if (jAtom->partner != NULL) {
-                            jAtom->partner->partner = NULL;
-                            jAtom->partner          = NULL;
-                        }
-
-                        Strand::pairDomain(iAtom, jAtom);   
-                    }
-
-                    /*for (unsigned i = iAtomId; i < iStrand->length(); i++) {
-                        
-                    }*/
                 }
             }
-        } else if (iAtom->partner != NULL && nucleotides[iAtom->domain.get()]->ReDeNaturationP(nucleotides[iAtom->partner->domain.get()], temp) < RANDOM_FLOAT()) {
+        } else if (iAtom->partner != NULL && nucleotides[iAtom->domain.get()]->DeNaturationP(nucleotides[iAtom->partner->domain.get()], temp) > RANDOM_FLOAT()) {
             iAtom->partner->partner = NULL;
             iAtom->partner          = NULL;
         }
 
-        time--;
+        if (sim_time % 100 == 99) {
+            this->deterministicBind();
+        }
+
+        sim_time--;
+    }
+
+    this->deterministicBind(); //do correct unbind
+}
+
+void Molecule::deterministicBind() {
+
+    #pragma omp parallel for
+    for (int main_i = 0; main_i < this->size(); main_i++) {
+        auto mainStrand = this->getStrand(main_i);
+
+        for (int i = 0; i < this->size(); i++) {
+            auto strand = this->getStrand(i);
+            int  strandBS = -1; 
+            int  mainBS   = -1;
+            bool doBind   = false;
+
+            //find bind spot
+            for (int j = 0; j < strand->length(); j++) {
+                auto atom = strand->getAtom(j);
+                if (atom->partner != NULL && atom->partner->strand == mainStrand) {
+                    strandBS = j;
+                    mainBS   = atom->partner - atom->partner->strand->getAtom(0);
+                }
+            }
+
+            if (strandBS == -1) continue;
+
+            for (int j = strandBS; j < strand->length(); j++) {
+                auto k = mainBS + (j - strandBS);
+
+                if (k >= mainStrand->length()) break;
+                if (strand->getAtom(j)->partner != NULL) continue;
+
+                if (mainStrand->getAtom(k)->domain == ~strand->getAtom(j)->domain) {
+                    if (mainStrand->getAtom(k)->partner == NULL) { // do bind
+                        Strand::pairDomain(mainStrand->getAtom(k), strand->getAtom(j));
+                    } else if (mainStrand->getAtom(k)->partner->strand != strand) { // do ubnind of existing but not bind new and remeber it for second loop
+                        mainStrand->getAtom(k)->partnersCount = 100;
+                        mainStrand->getAtom(k)->partner->partnersCount = 100;
+                    }
+                }
+            }
+
+
+            for (int j = strandBS; j >= 0; j--) {
+                auto k = mainBS - (strandBS - j);
+
+                if (k < 0) break;
+                if (strand->getAtom(j)->partner != NULL) continue;
+
+                if (mainStrand->getAtom(k)->domain == ~strand->getAtom(j)->domain) {
+                    if (mainStrand->getAtom(k)->partner == NULL) { // do bind
+                        Strand::pairDomain(mainStrand->getAtom(k), strand->getAtom(j));
+                    } else if (mainStrand->getAtom(k)->partner->strand != strand) { // do ubnind of existing but not bind new
+                        mainStrand->getAtom(k)->partnersCount = 100;
+                        mainStrand->getAtom(k)->partner->partnersCount = 100;
+                    }
+                }
+            }
+        }
+    }
+
+    for (int main_i = 1; main_i < this->size(); main_i++) {
+        auto mainStrand = this->getStrand(main_i);
+
+        int bind_size = 0;
+        bool unbindforce = false;
+            
+        for (int i = 0; i < mainStrand->length(); i++) {
+            if (mainStrand->getAtom(i)->partnersCount != 100 &&
+                mainStrand->getAtom(i)->partner != NULL &&
+                mainStrand->getAtom(i)->partner->partner == mainStrand->getAtom(i) &&
+                mainStrand->getAtom(i)->partner->strand == this->getStrand(0)) bind_size += 1;
+
+            if (mainStrand->getAtom(i)->partnersCount == 100 &&
+                mainStrand->getAtom(i)->partner != NULL) unbindforce = true;
+
+            mainStrand->getAtom(i)->partnersCount = 0;
+        }
+
+        if (bind_size < 1 || (bind_size <= 1 && unbindforce)) {
+            for (int i = 0; i < mainStrand->length(); i++) {
+                Strand::unpairDomain(mainStrand->getAtom(i));
+            }
+        }
     }
 }
 

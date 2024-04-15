@@ -1,4 +1,4 @@
-NAME="Sticker automaton nucleotides level"
+NAME="rule110_nuc"
 
 test:
 	for it in $$(seq 1 40); do \

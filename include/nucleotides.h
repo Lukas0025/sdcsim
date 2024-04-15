@@ -41,7 +41,8 @@ class Nucleotides {
             return nuc;
         }
 
-        float ReDeNaturationP(Nucleotides* partner, float temp);
+        float ReNaturationP(Nucleotides* partner, float temp);
+        float DeNaturationP(Nucleotides* partner, float temp);
         float deltaH(Nucleotides* partner);
         float deltaS(Nucleotides* partner);
 

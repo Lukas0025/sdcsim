@@ -4,6 +4,7 @@
 #include "molecule.h"
 #include "output.h"
 #include "assembly.h"
+#include "error.h"
 #include <regex>
 #include <iostream>
 
@@ -15,6 +16,7 @@ namespace assembly {
     const std::regex dataRegex        ("\n *data *: *");
     const std::regex domainRegex      ("\n *domains *: *");
     const std::regex instructionsRegex("\n *instructions *: *");
+    const std::regex controlLabelRegex(".*:");
 
     void replaceAll(std::string& str, const std::string& from, const std::string& to) {
         if(from.empty()) return;
@@ -115,6 +117,7 @@ namespace assembly {
             std::string right = "";
             bool isComment    = false;
             uint part         = 0;
+            uint line         = 0;
 
             //ok now read char by char
             for (unsigned i = pos; i < asmStr.length(); i++) {
@@ -133,6 +136,7 @@ namespace assembly {
                     }
 
                     part = 0;
+                    line += 1;
                     isComment = false;
                     continue;
                 }
@@ -161,6 +165,10 @@ namespace assembly {
                     right += asmStr[i];
                     continue;
                 }
+
+                if (part > 1 && !isComment) {
+                    error::assemblyUnknowControlSeq(" after define\n", line);
+                }
             }
         }
 
@@ -177,7 +185,7 @@ namespace assembly {
         return dictionary.size() - 1;
     }
 
-    Molecule* parseMolecule(std::string strMol, std::vector<std::string> &dictionary, std::map<DOMAIN_DT, Nucleotides*> *nucleotides) {
+    Molecule* parseMolecule(std::string strMol, std::vector<std::string> &dictionary, std::map<DOMAIN_DT, Nucleotides*> *nucleotides, int line, const char* linepos) {
         bool up             = false;
         bool dbl            = false;
         bool down           = false;
@@ -233,6 +241,8 @@ namespace assembly {
         for (unsigned i = 0; i < strMol.length(); i++) {
 
             if (strMol[i] == '<') { // start of upper strand
+                if (up || down || dbl) error::assemblyUnknowControlSeq(linepos, line);
+
                 up   = true;
 
                 if (!concat) {
@@ -248,6 +258,8 @@ namespace assembly {
 
                 concat = false;
             } else if (strMol[i] == '[') { // start double strand
+                if (up || down || dbl) error::assemblyUnknowControlSeq(linepos, line);
+
                 if (!concat) {
                     if (workStrand != NULL) {
                         auto id = molecule->addStrand(workStrand, startPos);
@@ -263,7 +275,12 @@ namespace assembly {
 
                 concat = false;
             } else if (strMol[i] == '{') { // start of bottom strand
+                if (up || down || dbl) error::assemblyUnknowControlSeq(linepos, line);
                 down = true;
+
+                if (concat) {
+                    error::assemblyInvalidConcat(linepos, line);
+                }
 
                 if (workStrand != NULL) {
                     auto id = molecule->addStrand(workStrand, startPos);
@@ -273,18 +290,27 @@ namespace assembly {
                 workStrand = NULL;
                 concat = false;
             } else if (strMol[i] == '>') { // end of upper strand
+                if (!up) error::assemblyUnknowControlSeq(linepos, line);
+
                 up     = false;
             } else if (strMol[i] == ']') { // end of double strand
+                if (!dbl) error::assemblyUnknowControlSeq(linepos, line);
+
                 bindEnd = mainStrandPos - 1;
                 dbl    = false;
             } else if (strMol[i] == '}') { // end of bottom strand
+                if (!down) error::assemblyUnknowControlSeq(linepos, line);
+
                 down   = false;
             } else if (strMol[i] == '.') { // concatenation
+                if (concat) error::assemblyUnknowControlSeq(linepos, line);
+
                 concat = true;
-            } else {
-            
+            } else {            
                 if (up == true) {
                     if (strMol[i] == '*') {
+                        if (workStrand->length() == 0) error::assemblyComplementOfNothing(linepos, line);
+
                         workStrand->complementaryLast();
                     } else {
                         workStrand->addDomain(
@@ -298,10 +324,12 @@ namespace assembly {
                             startPos--;
                         }
                     }
-                } else if (down == true && strMol[i] != '*') {
-                    mainStrandPos++;
+                } else if (down == true) {
+                    if (strMol[i] != '*') mainStrandPos++;
                 } else if (dbl  == true) {
                     if (strMol[i] == '*') {
+                        if (workStrand->length() == 0) error::assemblyComplementOfNothing(linepos, line);
+                        
                         workStrand->complementaryLast();
                     } else {
                         workStrand->addDomain(
@@ -315,10 +343,12 @@ namespace assembly {
                         mainStrandPos++;
                     }
                 } else {
-                    //error here
+                    error::assemblyUnknowControlSeq(linepos, line);
                 }
             }
         }
+
+        if (up || down || dbl || concat) error::assemblyUncompleteControlSeq(linepos, line);
 
         return molecule;
     }
@@ -337,6 +367,7 @@ namespace assembly {
             std::string right = "";
             bool isComment    = false;
             uint part         = 0;
+            int line          = 0;
 
             //ok now read char by char
             for (unsigned i = pos; i < asmStr.length(); i++) {
@@ -349,6 +380,7 @@ namespace assembly {
 
                     part = 0;
                     isComment = false;
+                    line += 1;
                     continue;
                 }
 
@@ -402,6 +434,7 @@ namespace assembly {
 
             std::string reading  = "";
             bool isComment       = false;
+            int line             = 0;
 
             std::vector<Molecule*> molecules;
 
@@ -410,7 +443,7 @@ namespace assembly {
 
                 if (asmStr[i] == '\n') {
                     if (reading.length() > 0) {
-                        molecules.push_back(parseMolecule(reading, dictionary, &nucleotides));
+                        molecules.push_back(parseMolecule(reading, dictionary, &nucleotides, line, " after instructions\n"));
                     }
 
                     reading = "";
@@ -421,6 +454,7 @@ namespace assembly {
                     }
 
                     isComment = false;
+                    line++;
                     continue;
                 }
 
@@ -436,7 +470,7 @@ namespace assembly {
                 if (asmStr[i] == ' ') {
 
                     if (reading.length() > 0) {
-                        molecules.push_back(parseMolecule(reading, dictionary, &nucleotides));
+                        molecules.push_back(parseMolecule(reading, dictionary, &nucleotides, line, " after instructions\n"));
                         reading = "";
                     }
 
@@ -461,17 +495,19 @@ namespace assembly {
 
             std::string reading  = "";
             bool isComment       = false;
+            int line             = 0;
 
             //ok now read char by char
             for (unsigned i = pos; i < asmStr.length(); i++) {
 
                 if (asmStr[i] == '\n') {
                     if (reading.length() > 0) {
-                        registers.push_back(new Register(parseMolecule(reading, dictionary, &nucleotides)));
+                        registers.push_back(new Register(parseMolecule(reading, dictionary, &nucleotides, line, " after data\n")));
 
                         reading = "";
                     }
 
+                    line++;
                     isComment = false;
                     continue;
                 }
@@ -507,6 +543,54 @@ namespace assembly {
 
         //add new line at start
         asmStr = '\n' + asmStr + '\n'; // for working regex
+
+        //check all control labels
+        std::smatch contolLabels;
+        std::string::const_iterator text_iter = asmStr.cbegin();
+
+        bool defineD = false;
+        bool dataD   = false;
+        bool instD   = false;
+        bool domainD = false;
+
+        while (std::regex_search(text_iter, asmStr.cend(), contolLabels, controlLabelRegex)) {
+            bool pass = false;
+
+            if (std::regex_match("\n" + contolLabels[0].str(), defineRegex)) {
+                if (defineD) error::assemblyMultipleControlLabel(contolLabels[0].str().c_str());
+
+                defineD = true;
+                pass    = true;
+            }
+
+            if (std::regex_match("\n" + contolLabels[0].str(), dataRegex)) {
+                if (dataD) error::assemblyMultipleControlLabel(contolLabels[0].str().c_str());
+
+                dataD   = true;
+                pass    = true;
+            }
+            
+            if (std::regex_match("\n" + contolLabels[0].str(), instructionsRegex)) {
+                if (instD) error::assemblyMultipleControlLabel(contolLabels[0].str().c_str());
+
+                instD   = true;
+                pass    = true;
+            }
+            
+            if (std::regex_match("\n" + contolLabels[0].str(), domainRegex)) {
+                if (domainD) error::assemblyMultipleControlLabel(contolLabels[0].str().c_str());
+
+                domainD = true;
+                pass    = true;
+            }
+
+            if (!pass) {
+                error::assemblyUnknowControlLabel(contolLabels[0].str().c_str());
+            }
+
+            //shift itereator
+            text_iter = contolLabels.suffix().first;
+        }
 
         //get macros
         parseDefine(asmStr, macros);

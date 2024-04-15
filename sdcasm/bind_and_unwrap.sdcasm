@@ -1,0 +1,19 @@
+#
+# Simple bind with other strand unwrap example
+# @autor Lukáš Plevač <xpleva07@vutbr.cz>
+# @date 18.02.2024
+#
+
+# define nucleotides reprezentation of domains
+domains:
+    A CACATAC
+    B CTTTACA
+    C TCTCCT
+    D ACACACA
+    E CATTTAC
+
+data:
+    [ABC]{DE}
+
+instructions:
+    {C*D*E*}

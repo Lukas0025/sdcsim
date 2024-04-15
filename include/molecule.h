@@ -23,7 +23,8 @@ class Molecule {
         unsigned size();
         bool     finishDelete();
 
-        void     simulate(std::map<DOMAIN_DT, Nucleotides*> &nucleotides, float temp, std::vector<Molecule*> &instruction);
+        void     simulate(std::map<DOMAIN_DT, Nucleotides*> &nucleotides, float temp, std::vector<Molecule*> &instruction, unsigned strands_count, unsigned time);
+        void     deterministicBind();
 
     private:
         std::vector<Strand*>* strands;

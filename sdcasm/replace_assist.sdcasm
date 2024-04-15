@@ -1,0 +1,20 @@
+#
+# Simple replace with two chains example
+# @autor Lukáš Plevač <xpleva07@vutbr.cz>
+# @date 18.02.2024
+#
+
+# define nucleotides reprezentation of domains
+domains:
+    A CACATAC
+    B CTTTACA
+    C TCTCCT
+    D ACACACA
+    E CAAAACT
+    F TCAAATC
+
+data:
+    {A}[BCDE]{F}
+
+instructions:
+    {A*B*C*} {D*E*F*}

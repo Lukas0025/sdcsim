@@ -1,0 +1,17 @@
+#
+# Simple bind example
+# @autor Lukáš Plevač <xpleva07@vutbr.cz>
+# @date 18.02.2024
+#
+
+# define nucleotides reprezentation of domains
+domains:
+    A CACATAC
+    B CTTTACA
+    C TCTCCT
+
+data:
+    {ABC}
+
+instructions:
+    {A*B*}
