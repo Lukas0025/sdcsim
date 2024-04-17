@@ -54,4 +54,11 @@ namespace error {
         std::cerr << " in assebly file\n";
         exit(1);
     }
+
+    void inAppError(const char *name) {
+        std::cerr << "IN APP ERROR: ";
+        std::cerr << name;
+        std::cerr << "\n";
+        exit(1);
+    }
 }

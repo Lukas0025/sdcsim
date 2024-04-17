@@ -1,4 +1,5 @@
 #include "strand.h"
+#include "error.h"
 #include <iostream>
 #include <stdexcept>
 
@@ -23,6 +24,8 @@ unsigned Strand::length() {
 
 Atom* Strand::getAtom(unsigned index) {
     this->readOnly = true;
+
+    if (index >= this->atoms->size()) error::inAppError("Indexing out of range in strand"); 
 
     return &((*this->atoms)[index]);
 }

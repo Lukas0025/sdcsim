@@ -40,3 +40,4 @@ clean:
 	rm -rf build
 	rm -rf debug_build
 	rm -rf ./test-submission/
+	rm -rf ind-*

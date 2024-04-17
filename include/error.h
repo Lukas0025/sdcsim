@@ -7,4 +7,5 @@ namespace error {
     void unknowNucleotide(char* nuc);
     void assemblyUnknowControlLabel(const char *label);
     void assemblyMultipleControlLabel(const char *label);
+    void inAppError(const char *name);
 }

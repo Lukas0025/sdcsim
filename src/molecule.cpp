@@ -1,5 +1,6 @@
 #include <cstddef>
 #include "molecule.h"
+#include "error.h"
 #include <cstdlib>
 #include <iostream>
 #include <random>
@@ -181,7 +182,7 @@ unsigned Molecule::addStrand(Strand *strand, int bindFrom) {
     auto mainStrand = this->getStrand(0);
 
     //ok now do half pairing
-    for (unsigned i = mainBindFrom; i < std::min(strand->length() + mainBindFrom, mainStrand->length()); i++) {
+    for (unsigned i = mainBindFrom; i < std::min(strand->length() + mainBindFrom - incomeBindFrom, mainStrand->length()); i++) {
         auto bottom = mainStrand->getAtom(i);
         auto top    = strand->getAtom(i - mainBindFrom + incomeBindFrom);
 
@@ -226,6 +227,8 @@ bool Molecule::finishDelete() {
 }
 
 Strand* Molecule::getStrand(unsigned index) {
+    if (index >= this->strands->size()) error::inAppError("Indexing out of range in molecule"); 
+
     return this->strands->at(index);
 }
 
