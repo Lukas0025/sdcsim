@@ -173,7 +173,7 @@ int main(int argc, char *argv[])
    printRegisters(registers, dictionary, outputType, macros, svg, spaceing);
    svg.inscructionDone("inital");
 
-   if (decode) {
+   if (decode && outputType != "svg") {
       std::cout << "----------- DECODED -------------\n";
 
       printRegisters(registers, dictionary, "assembly", macros, svg, spaceing);
@@ -219,12 +219,11 @@ int main(int argc, char *argv[])
       svg.inscructionDone("final");
    }
 
-   if (decode) {
-      if (outputType != "svg") {
-         std::cout << "----------- DECODED -------------\n";
+   if (decode && outputType != "svg") {
+      std::cout << "----------- DECODED -------------\n";
+      
+      printRegisters(registers, dictionary, "assembly", macros, svg, spaceing);
 
-         printRegisters(registers, dictionary, "assembly", macros, svg, spaceing);
-      }
    }
 
    //print output
