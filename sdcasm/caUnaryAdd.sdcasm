@@ -1,0 +1,83 @@
+#
+# 3 state celular automaton in DNA|SIMD
+# @autor Lukáš Plevač <xpleva07@vutbr.cz>
+# @date 21.04.2024
+#
+
+define:
+    0 [AB][CD][EF]
+    1 [ABC][DEF]
+    2 {A}[BCDE]{F}
+
+data: # here is all compute state to evaluate
+    # 2 * 3
+    0000222
+    0001122
+    0001212
+    0002121
+    0011211
+    0012111
+    0021111
+    0111111
+
+    # 2 * 2
+    0000022
+    0000112
+    0000121
+    0000211
+    0001111
+
+    # 2 * 1
+    0000002
+    0000011
+
+instructions: 
+    {F*A*J*}       # mark 02, 22 and 20
+    {F*A*B*G*}     # mark 20 nothing to do here
+    {C*D*E*H*}     # mark 02
+    {D*E*F*A*G*}   # mark 12
+
+
+    #
+    # 02 to 11 part
+    #
+
+    {CDEH}         # unmark 02
+    
+    {D*E*F*G*}     # unbind 02 marker part 1
+    {DEFG}         # unbind 02 marker part 2
+
+    {F*A*B*H*}     # unvrap 2 in 02
+    {BCDE}         # unbind 2
+    {FABH}         # unbind unvraper
+
+    {A*B*C*D*E*H*} # mark upgoing 1
+
+    #
+    # 12 to 21 part
+    #
+
+    {ABCDE}        # when going 2 to 1 plce before other 2 mark it
+    {F*A*U*}
+
+    {DEFAG}        # remove 12 mark
+
+    {B*C*D*E*}     # write 2      
+
+    {F*A*M*}       # unvrap 0 when 02
+    {E*F*A*O*}     # mark 0 in 02
+    {FAM}          # unbind unvrap
+
+    {F*A*B*H*}     # unvrap 2 in 02
+    {BCDE}         # unbind 2
+    {FABH}         # unbind unvraper
+
+    {ABCDEH}       # unmark upgoing 1
+
+    {A*B*C*}       # write 1 by small parts to avoid deplacement of 2
+    {D*E*F*}
+
+    {FAJ}          # remove 22 marker
+
+    {EFAO}         # remove mark 0 in 02
+    {E*F*}         # write zero back

@@ -2,3 +2,5 @@ build
 debug_build
 test-submission
 plots/*.png
+slurm-*
+*.csv
