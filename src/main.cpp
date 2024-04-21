@@ -83,7 +83,7 @@ int main(int argc, char *argv[])
    args.add_argument("-t", "--time")
        .help("registr expose time to instruction")
        .scan<'i', int>()
-       .default_value(999999);
+       .default_value(-1);
 
    args.add_argument("-S", "--strands")
        .help("Number of inserted instruction strand copies")
@@ -168,7 +168,12 @@ int main(int argc, char *argv[])
       for (auto &reg : registers) {
          reg->enableNucleotidesLevel(nucleotides, temp, strands_count);
       }
+
+      time = (time < 0) ? 999999 : time;
    }
+
+   // when normal simulation
+   time = (time < 0) ? 30 : time;
 
    printRegisters(registers, dictionary, outputType, macros, svg, spaceing);
    svg.inscructionDone("inital");
@@ -221,7 +226,7 @@ int main(int argc, char *argv[])
 
    if (decode && outputType != "svg") {
       std::cout << "----------- DECODED -------------\n";
-      
+
       printRegisters(registers, dictionary, "assembly", macros, svg, spaceing);
 
    }
