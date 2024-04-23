@@ -1,3 +1,10 @@
+/**
+ * SDCSIM - strand displacement simulator on SIMD||DNA architecture
+ * @file nucleotides.cpp
+ * @brief Contain implementation of Nucleotides class
+ * @author Lukáš Plevač <xpleva07@vut.cz>
+ */
+
 #include <cstddef>
 #include "nucleotides.h"
 #include <iostream>

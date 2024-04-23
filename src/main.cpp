@@ -1,3 +1,10 @@
+/**
+ * SDCSIM - strand displacement simulator on SIMD||DNA architecture
+ * @file main.cpp
+ * @brief Contain implementation of TOP module of program
+ * @author Lukáš Plevač <xpleva07@vut.cz>
+ */
+
 #include <iostream>
 #include <argparse/argparse.hpp>
 #include "molecule.h"
@@ -191,6 +198,7 @@ int main(int argc, char *argv[])
       
       if (breakAt <= idInstruction) break;
 
+      #pragma omp parallel for
       for (auto &reg : registers) {
          reg->applyInstruction(instruction, time);
       }

@@ -4,4 +4,4 @@ test-submission
 plots/*.png
 slurm-*
 *.csv
-solution.sdcasm
+solution.sdcams

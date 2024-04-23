@@ -1,3 +1,10 @@
+/**
+ * SDCSIM - strand displacement simulator on SIMD||DNA architecture
+ * @file molecule.cpp
+ * @brief Contain implementation of molecule class
+ * @author Lukáš Plevač <xpleva07@vut.cz>
+ */
+
 #include <cstddef>
 #include "molecule.h"
 #include "error.h"
@@ -49,7 +56,7 @@ void Molecule::simulate(std::map<DOMAIN_DT, Nucleotides*> &nucleotides, float te
     Atom* iAtomBack = NULL;
     Atom* jAtomBack = NULL;
 
-    while (sim_time > 0) {
+    for (int i = 0; i < sim_time; i++) {
         //select i and j strands
         auto iStrand = this->getStrand(RANDOM_RANGE(this->size()));
         auto jStrand = this->getStrand(RANDOM_RANGE(this->size()));
@@ -72,11 +79,9 @@ void Molecule::simulate(std::map<DOMAIN_DT, Nucleotides*> &nucleotides, float te
             iAtom->partner          = NULL;
         }
 
-        if (sim_time % 100 == 99) {
+        if (i % 100 == 99) {
             this->deterministicBind();
         }
-
-        sim_time--;
     }
 
     this->deterministicBind(); //do correct unbind
@@ -84,7 +89,7 @@ void Molecule::simulate(std::map<DOMAIN_DT, Nucleotides*> &nucleotides, float te
 
 void Molecule::deterministicBind() {
 
-    #pragma omp parallel for
+    //#pragma omp parallel for
     for (int main_i = 0; main_i < this->size(); main_i++) {
         auto mainStrand = this->getStrand(main_i);
 

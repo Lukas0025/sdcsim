@@ -1,3 +1,10 @@
+/**
+ * SDCSIM - strand displacement simulator on SIMD||DNA architecture
+ * @file strand.cpp
+ * @brief Contain implementation of strand class
+ * @author Lukáš Plevač <xpleva07@vut.cz>
+ */
+
 #include "strand.h"
 #include "error.h"
 #include <iostream>
@@ -24,8 +31,6 @@ unsigned Strand::length() {
 
 Atom* Strand::getAtom(unsigned index) {
     this->readOnly = true;
-
-    if (index >= this->atoms->size()) error::inAppError("Indexing out of range in strand"); 
 
     return &((*this->atoms)[index]);
 }

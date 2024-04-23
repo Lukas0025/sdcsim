@@ -1,3 +1,10 @@
+/**
+ * SDCSIM - strand displacement simulator on SIMD||DNA architecture
+ * @file output.cpp
+ * @brief Contain implementation of output namespace
+ * @author Lukáš Plevač <xpleva07@vut.cz>
+ */
+
 #include <vector>
 #include <string>
 #include <iostream>

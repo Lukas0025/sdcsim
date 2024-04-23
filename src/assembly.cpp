@@ -1,3 +1,10 @@
+/**
+ * SDCSIM - strand displacement simulator on SIMD||DNA architecture
+ * @file assembly.cpp
+ * @brief Contain implementation of assembly namespace
+ * @author Lukáš Plevač <xpleva07@vut.cz>
+ */
+
 #include <string>
 #include <fstream>
 #include <streambuf>
@@ -534,6 +541,8 @@ namespace assembly {
     void parse(const char* filename, std::vector<Register*> &registers, std::vector<std::vector<Molecule*>> &inst, std::vector<std::string> &dictionary, std::vector<std::pair<std::string, std::string>> &macros, std::map<DOMAIN_DT, Nucleotides*> &nucleotides) {
         //first open file
         std::ifstream asmFile(filename);
+
+        if (asmFile.fail()) error::openAsmFile(filename);
         
         //read whole file to string -- not good for big files.
         std::string asmStr((std::istreambuf_iterator<char>(asmFile)), std::istreambuf_iterator<char>());

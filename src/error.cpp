@@ -1,3 +1,10 @@
+/**
+ * SDCSIM - strand displacement simulator on SIMD||DNA architecture
+ * @file error.cpp
+ * @brief Contain implementation of error namespace
+ * @author Lukáš Plevač <xpleva07@vut.cz>
+ */
+
 #include <iostream>
 
 namespace error {
@@ -52,6 +59,13 @@ namespace error {
         std::cerr << "ERROR: Multiple definition of control label ";
         std::cerr << label;
         std::cerr << " in assebly file\n";
+        exit(1);
+    }
+
+    void openAsmFile(const char *file) {
+        std::cerr << "ERROR: cant open assembly file ";
+        std::cerr << file;
+        std::cerr << "\n";
         exit(1);
     }
 

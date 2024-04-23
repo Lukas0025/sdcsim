@@ -7,6 +7,9 @@ project (sdcsim)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# Avoid warning about DOWNLOAD_EXTRACT_TIMESTAMP in CMake >= 3.24:
+cmake_policy(SET CMP0135 NEW)
+
 # google test
 include(FetchContent)
 FetchContent_Declare(

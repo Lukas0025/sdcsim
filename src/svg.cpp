@@ -1,3 +1,10 @@
+/**
+ * SDCSIM - strand displacement simulator on SIMD||DNA architecture
+ * @file svg.cpp
+ * @brief Contain implementation of svg class
+ * @author Lukáš Plevač <xpleva07@vut.cz>
+ */
+
 #include "svg.h"
 #include "output.h"
 

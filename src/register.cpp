@@ -1,3 +1,10 @@
+/**
+ * SDCSIM - strand displacement simulator on SIMD||DNA architecture
+ * @file register.cpp
+ * @brief Contain implementation of register class
+ * @author Lukáš Plevač <xpleva07@vut.cz>
+ */
+
 #include "register.h"
 #include <cmath>
 #include <iostream>
@@ -77,6 +84,7 @@ void Register::elution(std::map<DOMAIN_DT, Nucleotides*> &nucleotides) {
         bool  notOnMain  = true;
 
         // calculate bind score
+        //#pragma omp simd reduction(+:bindScore) reduction(&:notOnMain)
         for (int j = 0; j < mainStrand->length(); j++) {
             if (mainStrand->getAtom(j)->partner != NULL &&
                 mainStrand->getAtom(j)->partner->partner == mainStrand->getAtom(j)) {
@@ -197,6 +205,7 @@ void Register::removeUnstable(int to) {
 void Register::unbindOfMultiple() {
     auto mainStrand = this->reg->getStrand(0);
 
+    #pragma omp simd
     for (int i = 0; i < mainStrand->length(); i++) {
         auto atom = mainStrand->getAtom(i);
 
@@ -209,6 +218,7 @@ void Register::unbindOfMultiple() {
 void Register::bindOfMultiple() {
     auto mainStrand = this->reg->getStrand(0);
 
+    #pragma omp simd
     for (int i = 0; i < mainStrand->length(); i++) {
         auto atom = mainStrand->getAtom(i);
 
@@ -223,16 +233,15 @@ void Register::removeUnbinded(Molecule* mol) {
 
     auto strand = mol->getStrand(0);
 
+    //#pragma omp parallel for nevyplatí se
     for (int j = this->reg->size() - 1; j >= 1; j--) {
         auto mainStrand     = this->reg->getStrand(j);
         unsigned bindScore  = 0;
 
         // calculate bind score
+        #pragma omp simd reduction(+:bindScore)
         for (int i = 0; i < mainStrand->length(); i++) {
-            if (mainStrand->getAtom(i)->partner != NULL &&
-                mainStrand->getAtom(i)->partner->partner == mainStrand->getAtom(i)) {
-                bindScore++;
-            }
+            bindScore += mainStrand->getAtom(i)->partner != NULL && mainStrand->getAtom(i)->partner->partner == mainStrand->getAtom(i);
         }
 
 
@@ -245,6 +254,7 @@ void Register::removeUnbinded(Molecule* mol) {
             bool     canPull      = false;
 
             //try aligment it and check score
+            #pragma omp simd reduction(+:pullingScore, alignScore)
             for (int baseID = i < 0 ? std::abs(i) : 0; baseID < compareEnd; baseID++) {
                 
                 if (~(strand->getAtom(baseID)->domain) == mainStrand->getAtom(i + baseID)->domain) {
