@@ -415,6 +415,27 @@ class Genome():
                         else:
                             self.insts[i][j][4] = not(self.insts[i][j][4]) # use
 
+def dataDiversityFitness(pop):
+    for ind1 in pop:
+        shared = 1
+        for ind2 in pop:
+            dataCount  = 0
+            sharedCout = 0
+            for i in range(len(ind2.datas)):
+                dt1        = "".join(str(v) for v in ind2.getStableData(i)).replace("2", "1")
+                dt2        = "".join(str(v) for v in ind1.getStableData(i)).replace("2", "1")
+                dataCount += len(dt1)
+
+                for j in range(len(dt1)):
+                    if dt1[j] == dt2[j]: 
+                        sharedCout += 1
+
+        shared += sharedCout / dataCount
+            
+
+        ind1.fitness /= shared
+
+    return pop
 
 def eval_pop(pop):
     best = pop[0]
@@ -479,6 +500,10 @@ def GA(max_gen):
         if best.fitness == MAX_FITNESS:
             stop_flag = True
             break
+
+        # podpora diverzity dat
+        if generation < max_gen:
+            population = dataDiversityFitness(population)
 
         # elitizmus
         next_population[0] = deepcopy(best)

@@ -7,6 +7,15 @@ build:
 	cd build && \
 	cmake -D CMAKE_BUILD_TYPE=Release ..
 
+gpu_build:
+	mkdir gpu_build
+	cd gpu_build && \
+	cmake -D CMAKE_CXX_COMPILER=nvc++ -D CMAKE_BUILD_TYPE=Release -D ACC_TARGET=gpu ..
+
+gpu: gpu_build
+	cd gpu_build && \
+	make
+
 debug_build:
 	mkdir debug_build
 	cd debug_build && \
@@ -41,3 +50,4 @@ clean:
 	rm -rf debug_build
 	rm -rf ./test-submission/
 	rm -rf ind-*
+	rm -rf gpu_build

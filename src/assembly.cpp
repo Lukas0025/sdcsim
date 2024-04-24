@@ -197,7 +197,6 @@ namespace assembly {
         bool dbl            = false;
         bool down           = false;
         bool concat         = false;
-        bool complement     = false;
 
         auto mainStrend = new Strand(nucleotides);
 
@@ -233,7 +232,6 @@ namespace assembly {
         dbl        = false;
         down       = false;
         concat     = false;
-        complement = false;
 
         Strand*  workStrand    = NULL;
         int      startPos      = 0;

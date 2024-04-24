@@ -53,9 +53,6 @@ void Molecule::simulate(std::map<DOMAIN_DT, Nucleotides*> &nucleotides, float te
         }
     }
 
-    Atom* iAtomBack = NULL;
-    Atom* jAtomBack = NULL;
-
     for (int i = 0; i < sim_time; i++) {
         //select i and j strands
         auto iStrand = this->getStrand(RANDOM_RANGE(this->size()));
@@ -97,7 +94,6 @@ void Molecule::deterministicBind() {
             auto strand = this->getStrand(i);
             int  strandBS = -1; 
             int  mainBS   = -1;
-            bool doBind   = false;
 
             //find bind spot
             for (int j = 0; j < strand->length(); j++) {

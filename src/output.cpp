@@ -147,8 +147,6 @@ namespace output {
         displayString.push_back(std::string("")); //main chain
         paddingSizes .push_back(0);
 
-        int endAt = 0;
-
         for (unsigned i = 0; i < mainStrand->length(); i++) {
             auto atom = mainStrand->getAtom(i);
 

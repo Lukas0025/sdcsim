@@ -5,3 +5,4 @@ plots/*.png
 slurm-*
 *.csv
 solution.sdcams
+gpu_build

@@ -77,6 +77,11 @@ int main(int argc, char *argv[])
        .default_value(false)
        .implicit_value(true);
 
+   args.add_argument("-g", "--gpu")
+       .help("Run sumulation on nucleotides level on GPU")
+       .default_value(false)
+       .implicit_value(true);
+
    args.add_argument("-c", "--color")
        .help("Select color scheme for svg output")
        .default_value(std::string{"domain"})
@@ -117,7 +122,8 @@ int main(int argc, char *argv[])
 
    auto sdcAsmFile     = args.get<std::string>("sdcasm");
    auto outputType     = args.get<std::string>("-f");
-   auto spaceing       = (args.get<std::string>("-s")).c_str();
+   auto spaceingStr    = args.get<std::string>("-s");
+   auto spaceing       = spaceingStr.c_str();
    auto breakAt        = args.get<int>("-b");
    auto time           = args.get<int>("-t");
    auto strands_count  = args.get<int>("-S");
@@ -126,6 +132,7 @@ int main(int argc, char *argv[])
    bool all            = args["-a"] == true;
    bool silent         = args["--silent"] == true;
    bool nucleotidesSim = args["-n"] == true;
+   bool useGpu         = args["-g"] == true;
    uint8_t colorM      = CM_DOMAIN;
 
    if (args.get<std::string>("-c") == "chain") colorM  = CM_CHAIN;
@@ -145,7 +152,7 @@ int main(int argc, char *argv[])
    if (nucleotidesSim) {
       for (DOMAIN_DT i = 0; i < dictionary.size(); i++) {
          if (nucleotides.count(i) == 0) error::nucleotideLevelNotDefine();
-      }  
+      }
    }
 
    auto svg = Svg(18, 4, 12, colorM, dictionary);
@@ -174,6 +181,11 @@ int main(int argc, char *argv[])
    if (nucleotidesSim) {
       for (auto &reg : registers) {
          reg->enableNucleotidesLevel(nucleotides, temp, strands_count);
+
+         if (useGpu) {
+            reg->get()->initGpu();
+            reg->get()->updateGpu();
+         }
       }
 
       time = (time < 0) ? 999999 : time;
@@ -198,9 +210,15 @@ int main(int argc, char *argv[])
       
       if (breakAt <= idInstruction) break;
 
-      #pragma omp parallel for
-      for (auto &reg : registers) {
-         reg->applyInstruction(instruction, time);
+      if (useGpu && nucleotidesSim) {
+         for (auto &reg : registers) {
+            reg->applyInstruction(instruction, time);
+         }
+      } else {
+         //#pragma omp parallel for
+         for (auto &reg : registers) {
+            reg->applyInstruction(instruction, time);
+         }
       }
 
       if (all) {
@@ -212,11 +230,24 @@ int main(int argc, char *argv[])
             std::cout << '\n';
          }
 
+         if (useGpu && nucleotidesSim) {
+            for (auto &reg : registers) {
+               reg->get()->updateSelf();
+            }
+         }
+
          printRegisters(registers, dictionary, outputType, macros, svg, spaceing);  
          svg.inscructionDone(("instruction " + std::to_string(idInstruction)).c_str());
       }
       
       idInstruction++;
+   }
+
+   if (useGpu && nucleotidesSim) {
+      for (auto &reg : registers) {
+         reg->get()->updateSelf();
+         reg->get()->freeGpu();
+      }
    }
 
    if (!silent || !all) {
