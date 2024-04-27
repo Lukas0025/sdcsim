@@ -10,7 +10,7 @@ build:
 gpu_build:
 	mkdir gpu_build
 	cd gpu_build && \
-	cmake -D CMAKE_CXX_COMPILER=nvc++ -D CMAKE_BUILD_TYPE=Release -D ACC_TARGET=gpu ..
+	cmake -D CMAKE_CXX_COMPILER=nvc++ -D CMAKE_BUILD_TYPE=Debug -D ACC_TARGET=gpu ..
 
 gpu: gpu_build
 	cd gpu_build && \

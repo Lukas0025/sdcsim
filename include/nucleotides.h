@@ -9,7 +9,9 @@
 
 #include <vector>
 #include <string>
+#include <math.h>
 #include <cstdint>
+#include "gpu.h"
 
 #define NUCLEOTIDE_DT uint8_t
 
@@ -20,6 +22,8 @@
 // pyrmides
 #define CYTOSINE  0xFD
 #define THYMINE   0xFE
+
+#define boltzmann_constant 1.987204259e-3
 
 // ~pyrmides == purines <=> pyrmides == ~purines
 
@@ -57,11 +61,20 @@ class Nucleotides {
 
         /**
          * Compute bind power between to nucleotides
-         * @param na1 nucleotide 
-         * @param na2 nucleotide
+         * @param n1 nucleotide 
+         * @param n2 nucleotide
          * @return energy in kcal
          */
-        static float bindPower(NUCLEOTIDE_DT na1, NUCLEOTIDE_DT na2);
+        static inline float bindPower(NUCLEOTIDE_DT n1, NUCLEOTIDE_DT n2) {
+            //Klump and Ackermann 1971 data
+            if ((n1 == GUANINE && n2 == CYTOSINE) || (n2 == GUANINE && n1 == CYTOSINE)) {
+                return -9.0; // 9kcal
+            } else if ((n1 == ADENINE && n2 == THYMINE) || (n2 == ADENINE && n1 == THYMINE)) {
+                return -7.2; // 7.2kcal
+            } else {
+                return -5.4; // 5.4kcal
+            }
+        }
 
         /**
          * Get string of nucleotides strand
@@ -111,6 +124,52 @@ class Nucleotides {
          * @return float
          */
         float deltaS(Nucleotides* partner);
+
+        /**
+        * GPU Implementations
+        */
+
+        static inline float GpuReNaturationP(int d1, int d2, int* gpuData, float temp) {
+            temp += 273.15; // convert to kelvin
+            
+            return std::min(1., 
+                exp(
+                    -(
+                        (Nucleotides::GPUDeltaH(d1, d2, gpuData) + temp * Nucleotides::GPUDeltaS(d1, d2, gpuData)) /
+                        (boltzmann_constant * temp)
+                    )
+                )
+            );
+        }
+
+        static inline float GpuDeNaturationP(int d1, int d2, int* gpuData, float temp) {
+            temp += 273.15; // convert to kelvin
+            
+            return std::min(1., 
+                exp(
+                    -(
+                        ((-Nucleotides::GPUDeltaH(d1, d2, gpuData)) - temp * Nucleotides::GPUDeltaS(d1, d2, gpuData)) /
+                        (boltzmann_constant * temp)
+                    )
+                )
+            );
+        }
+
+        static inline float GPUDeltaS(int d1, int d2, int* gpuData) {
+            return 0.023 * std::min(gpuData[GET_GPU_COUNT_COL(d1, GPU_NUCLEOTIDES)], gpuData[GET_GPU_COUNT_COL(d2, GPU_NUCLEOTIDES)]);
+        }
+
+        static inline float GPUDeltaH(int d1, int d2, int* gpuData) {
+            float sum = 0;
+            auto  len = std::min(gpuData[GET_GPU_COUNT_COL(d1, GPU_NUCLEOTIDES)], gpuData[GET_GPU_COUNT_COL(d2, GPU_NUCLEOTIDES)]);
+
+            #pragma acc loop seq
+            for (unsigned i = 0; i < len; i++) {
+                sum += Nucleotides::bindPower(gpuData[GPU_ELEMENT(i, d1, GPU_NUCLEOTIDES)], gpuData[GPU_ELEMENT(i, d2, GPU_NUCLEOTIDES)]);
+            }
+
+            return sum;
+        }
 
     private:
         std::vector<NUCLEOTIDE_DT>* strand;

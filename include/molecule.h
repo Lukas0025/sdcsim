@@ -9,26 +9,9 @@
 
 class Molecule;
 
-#define MAX_GPU_STRANDS    1000
-#define MAX_GPU_STRAND_LEN 255
-#define GPU_DEPTH          4
-#define GPU_BACK_DEPTH     2
-
-#define GPU_MEM_SIZE       (MAX_GPU_STRANDS * MAX_GPU_STRAND_LEN * GPU_DEPTH + 1)
-#define GPU_BACK_MEM_SIZE  (MAX_GPU_STRANDS * MAX_GPU_STRAND_LEN * GPU_BACK_DEPTH + 1)
-
-// definition of depth
-#define GPU_PARTNER_STRAND 0
-#define GPU_PARTNER_ATOM   1 
-#define GPU_DOMAIN         2
-#define GPU_NUCLEOTIDES    3
-
-// on first position is alwais length
-#define GPU_ELEMENT(y, x, z)    (2 + x + y * MAX_GPU_STRANDS + z * MAX_GPU_STRAND_LEN * MAX_GPU_STRANDS)
-#define GET_GPU_COUNT_COL(x, z) GPU_ELEMENT(x, -1, z)
-#define GET_GPU_COUNT_ROW()     0
-
 #include <vector>
+#include <map>
+#include "gpu.h"
 #include "strand.h"
 
 /**
@@ -103,15 +86,42 @@ class Molecule {
          */
         void     deterministicBind();
 
-        void initGpu();
+        /**
+         * Init GPU for simulation
+         * @param nucleotides nucleotides for simulation
+         */
+        void initGpu(std::map<DOMAIN_DT, Nucleotides*> &nucleotides);
+
+        /**
+          * Free gpu resources (deinit)
+          */
         void freeGpu();
+
+        /**
+          * Copy data from GPU to HOST
+          */
         void updateSelf();
+
+        /**
+          * Copy data from HOST to GPU
+          */
         void updateGpu();
+
+        /**
+         * Do strochastic simulation in molecule on GPU acelerator
+         * @param nucleotides    map of nucleotides reprezentation
+         * @param temp           temperature of solution with molecule
+         * @param instruction    vector of incoming molecules / strands
+         * @param strands_count  quntity in incoming molecules / strads
+         * @param time           time of simulation
+         */
+        void simulateGpu(std::map<DOMAIN_DT, Nucleotides*> &nucleotides, float temp, std::vector<Molecule*> &instruction, unsigned strands_count, unsigned sim_time);
 
     private:
         std::vector<Strand*>* strands; //< @brief strads in molecule
 
         /* GPU */
-        int* Gmem = NULL; // 3D ARRAY 
+        int* Gmem  = NULL; // 3D ARRAY 
+        bool onGPU = false;
         
 };

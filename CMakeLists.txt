@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 3.5)
 # Set the project name
 project (sdcsim)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Avoid warning about DOWNLOAD_EXTRACT_TIMESTAMP in CMake >= 3.24:
@@ -29,8 +29,8 @@ if(DEFINED ACC_TARGET)
   set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3 -acc=${ACC_TARGET} -Minfo=accel -Xcompiler -fopenmp -mp=multicore")
 
   if(ACC_TARGET MATCHES "gpu")
-    set(CMAKE_CXX_FLAGS_DEBUG   "${CMAKE_CXX_FLAGS_DEBUG} -gpu=ccall,debug,pinned")
-    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -gpu=ccall,fastmath,pinned")
+    set(CMAKE_CXX_FLAGS_DEBUG   "${CMAKE_CXX_FLAGS_DEBUG} -gpu=cc61,debug -cudalib=curand")
+    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -gpu=cc61,fastmath -cudalib=curand")
   endif()
 
   # Add an executable

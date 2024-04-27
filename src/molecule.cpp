@@ -43,6 +43,9 @@ inline bool isPossibleToBind(Atom* iAtom, Atom* jAtom) {
 }
 
 void Molecule::simulate(std::map<DOMAIN_DT, Nucleotides*> &nucleotides, float temp, std::vector<Molecule*> &instruction, unsigned strands_count, unsigned sim_time) {
+
+    if (this->onGPU) return this->simulateGpu(nucleotides, temp, instruction, strands_count, sim_time);
+
     // set random seed
     std::mt19937 mt(time(nullptr)); 
 
@@ -76,7 +79,7 @@ void Molecule::simulate(std::map<DOMAIN_DT, Nucleotides*> &nucleotides, float te
             iAtom->partner          = NULL;
         }
 
-        if (i % 100 == 99) {
+        if (i % 2048 == 2047) {
             this->deterministicBind();
         }
     }

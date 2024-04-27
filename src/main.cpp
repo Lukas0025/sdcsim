@@ -183,7 +183,7 @@ int main(int argc, char *argv[])
          reg->enableNucleotidesLevel(nucleotides, temp, strands_count);
 
          if (useGpu) {
-            reg->get()->initGpu();
+            reg->get()->initGpu(nucleotides);
             reg->get()->updateGpu();
          }
       }
@@ -230,12 +230,6 @@ int main(int argc, char *argv[])
             std::cout << '\n';
          }
 
-         if (useGpu && nucleotidesSim) {
-            for (auto &reg : registers) {
-               reg->get()->updateSelf();
-            }
-         }
-
          printRegisters(registers, dictionary, outputType, macros, svg, spaceing);  
          svg.inscructionDone(("instruction " + std::to_string(idInstruction)).c_str());
       }
@@ -245,7 +239,6 @@ int main(int argc, char *argv[])
 
    if (useGpu && nucleotidesSim) {
       for (auto &reg : registers) {
-         reg->get()->updateSelf();
          reg->get()->freeGpu();
       }
    }

@@ -11,8 +11,6 @@
 #include <math.h>       /* exp */
 #include "error.h"
 
-const double boltzmann_constant = 1.987204259e-3;
-
 Nucleotides::Nucleotides() {
     this->strand = new std::vector<NUCLEOTIDE_DT>;
 }
@@ -85,19 +83,6 @@ float Nucleotides::deltaH(Nucleotides* partner) {
 
 float Nucleotides::deltaS(Nucleotides* partner) {
     return 0.023 * std::min(this->length(), partner->length());
-}
-
-float Nucleotides::bindPower(NUCLEOTIDE_DT n1, NUCLEOTIDE_DT n2) {
-
-    //Klump and Ackermann 1971 data
-    if ((n1 == GUANINE && n2 == CYTOSINE) || (n2 == GUANINE && n1 == CYTOSINE)) {
-        return -9.0; // 9kcal
-    } else if ((n1 == ADENINE && n2 == THYMINE) || (n2 == ADENINE && n1 == THYMINE)) {
-        return -7.2; // 7.2kcal
-    } else {
-        return -5.4; // 5.4kcal
-    }
-
 }
 
 std::string Nucleotides::getStr() {
