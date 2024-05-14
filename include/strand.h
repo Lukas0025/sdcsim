@@ -105,6 +105,18 @@ class Strand {
          */
         bool isDeleted();
 
+        /**
+         * get color of strand
+         * @return char* used color
+         */
+        const char* getColor();
+
+        /**
+         * set color of strand
+         * @param color char* of color
+         */
+        void setColor(const char* color);
+
     private:
         /**
          * Create new atom from domain
@@ -119,5 +131,7 @@ class Strand {
         bool deleted;             //< @brief deleted mark
 
         std::map<DOMAIN_DT, Nucleotides*> *nucleotides;
+
+        const char* color;              //< @brief color string for output namaspace
 
 };

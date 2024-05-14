@@ -12,8 +12,10 @@
 #include <iostream>
 #include <random>
 
-#include <openacc.h>
-#include "openacc_curand.h"
+#ifdef _OPENACC
+    #include <openacc.h>
+    #include "openacc_curand.h"
+#endif
 
 #define TO_GPU_DOMAIN(X)  (DOMAIN_DT)(IS_COMPLEMENTARY(X) ? LAST_STRAND_INDEX - NORMALIZE_DOMAIN(X) : X)
 #define ON_GPU_IS_COMP(X) ((LAST_STRAND_INDEX >> 1) < X)
@@ -236,12 +238,16 @@ inline void GPUdeterministicBind(int* Gmem) {
     }
 }
 
+#ifdef _OPENACC
 #pragma acc routine seq nohost
 inline int randomRange(curandState_t* state, int rangeI) {
     return ((int)(curand_uniform(state) * (float)rangeI));
 }
+#endif
 
 void Molecule::simulateGpu(std::map<DOMAIN_DT, Nucleotides*> &nucleotides, float temp, std::vector<Molecule*> &instruction, unsigned strands_count, unsigned sim_time) {
+    #ifdef _OPENACC
+
     // insert instructions strands
     for (unsigned i = 0; i < strands_count; i++) {
         for (const auto &s : instruction) {
@@ -332,4 +338,6 @@ void Molecule::simulateGpu(std::map<DOMAIN_DT, Nucleotides*> &nucleotides, float
 
     //UPDATE CPU data
     this->updateSelf();
+    
+    #endif
 }

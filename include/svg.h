@@ -102,6 +102,12 @@ class Svg {
          */
         void        regDone();
 
+        /**
+         * Set strand as currently in draw (for correct colors)
+         * @param strand pointer for current strand
+         */
+        void setStrand(Strand *strand);
+
     private:
         /**
          * Get color for domain
@@ -133,6 +139,8 @@ class Svg {
         bool shortedNextUpper;
         
         uint8_t colorMode;
+
+        Strand* currentStrand = NULL;             //< @brief currently strand in draw
 
         std::vector<std::string> *names;
 };

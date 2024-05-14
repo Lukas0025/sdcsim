@@ -210,15 +210,11 @@ int main(int argc, char *argv[])
       
       if (breakAt <= idInstruction) break;
 
-      if (useGpu && nucleotidesSim) {
-         for (auto &reg : registers) {
-            reg->applyInstruction(instruction, time);
-         }
-      } else {
-         //#pragma omp parallel for
-         for (auto &reg : registers) {
-            reg->applyInstruction(instruction, time);
-         }
+      #ifndef _OPENACC
+         #pragma omp parallel for
+      #endif
+      for (auto &reg : registers) {
+         reg->applyInstruction(instruction, time);
       }
 
       if (all) {

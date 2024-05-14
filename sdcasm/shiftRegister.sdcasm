@@ -12,15 +12,6 @@ define:
 data:
     #    Implicit zero
     00110[ABC][DE][NSL]
-    01100[ABC][DE][NSL]
-    11000[ABC][DE][NSL]
-    10000[ABC][DE][NSL]
-    10101[ABC][DE][NSL]
-    01010[ABC][DE][NSL]
-    11010[ABC][DE][NSL]
-    01101[ABC][DE][NSL]
-    00000[ABC][DE][NSL]
-    11111[ABC][DE][NSL]
 
 instructions: # O(33)
     {E*N*S*L*A*}      # unvrap DE from zero and bind here on tother site onvrap first base
@@ -37,7 +28,7 @@ instructions: # O(33)
     {E*N*S*L*J*}      # try fit in free space between cells (when 1 on right thare is no free base when 0 there is one free base)
     {D*E*N*S*L*G*}    # replace {E*N*S*L*J*} when 0 on rigth
     {DENSLG}          # REMOVE {D*E*N*S*L*G*} (now free only when have 0 on rigth)
-    {D*E*N*S*L*A*B*}  # unvrap 0 when is on left is 0 on free space and fully binde here if is 0 right 
+    {D*E*N*S*L*A*B*}  # unvrap 0 when is on left is 1 on free space and fully binde here if is 0 right 
     {DENSLAB}         # unvrap {D*E*N*S*L*A*B*} when 1 on rigth
 
     {E*N*S*L*Y*}         # pad NOT selector to prevent bind not selector here (01)

@@ -530,7 +530,7 @@ def GA(max_gen):
     return best, stop_flag
 
 history = []
-for _ in range(50):
+for _ in range(30):
     best, sf = GA(GENERATIONS)
 
     history.append([

@@ -1,5 +1,5 @@
 # Set the minimum version of CMake that can be used
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.9)
 
 # Set the project name
 project (sdcsim)
@@ -52,7 +52,7 @@ if(DEFINED ACC_TARGET)
 endif()
 
 if(NOT DEFINED ACC_TARGET)
-  message(STATUS "CPU only compiler. Use NVHPC compiler If you want compile GPU version. ${CMAKE_CXX_COMPILER_ID}")
+  message(STATUS "CPU only compiler. Use NVHPC compiler If you want compile GPU version. Using ${CMAKE_CXX_COMPILER_ID} compiler.")
 
   # google test
   include(FetchContent)
@@ -82,10 +82,24 @@ if(NOT DEFINED ACC_TARGET)
   # Add an executable
   add_executable(sdcsim
     src/main.cpp
+    src/domain.cpp
+    src/strand.cpp
+    src/molecule.cpp
+    src/molecule_gpu.cpp
+    src/output.cpp
+    src/assembly.cpp
+    src/register.cpp
+    src/svg.cpp
+    src/nucleotides.cpp
+    src/error.cpp
   )
 
-  target_link_libraries(sdcsim project_lib)
-  target_link_libraries(sdcsim argparse)
+  find_package(OpenMP)
+  if(OpenMP_CXX_FOUND)
+    target_link_libraries(sdcsim PUBLIC OpenMP::OpenMP_CXX argparse)
+  else(OpenMP_CXX_FOUND)
+    target_link_libraries(sdcsim argparse)
+  endif()
 
   ##############
   # Unit Tests

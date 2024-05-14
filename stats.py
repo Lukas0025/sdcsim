@@ -20,7 +20,7 @@ parser.add_argument('--time_step',               type=int, help='Step between ti
 parser.add_argument('--strands',                 type=int, help='Number of strands') 
 parser.add_argument('--strands_range',           type=int, help='Range of strands number') 
 parser.add_argument('--strands_step',            type=int, help='step in strends number') 
-parser.add_argument('-c', '--csv',                         help='Store test results in csv file', action='store_true')
+parser.add_argument('-c', '--csv',               type=str, help='Store test results in csv file')
 parser.add_argument('-p', '--plot',              type=str, help='Store ratio plot to file')
 parser.add_argument('-s', '--samples',           type=int, help='How many samples per 1deg')
 parser.add_argument('--target',                  type=str, help='Expected target output of simulation')
@@ -95,6 +95,7 @@ def forTemp(sdcsim, sdcasm, temp, individuals, target, time, strands):
 
 
 fig, ax = plt.subplots()
+Alloutputs = []
 
 for strands in range(int(args.strands - args.strands_range / 2), int(args.strands + args.strands_range / 2), args.strands_step):
     for time in range(int(args.time - args.time_range / 2), int(args.time + args.time_range / 2), args.time_step):
@@ -104,6 +105,14 @@ for strands in range(int(args.strands - args.strands_range / 2), int(args.strand
         if args.plot is not None:
             outputs = np.array(outputs)
             ax.plot(outputs[:,0], outputs[:,1], label=f"time: {time} strands: {strands}")
+
+        for tempI in range(int(args.temperarure_range * args.samples)):
+            Alloutputs.append([
+                time,
+                strands,
+                outputs[tempI][0],
+                outputs[tempI][1]
+            ])
 
 
 if args.plot is not None:
@@ -115,3 +124,10 @@ if args.plot is not None:
 
     fig.savefig(args.plot)
 
+if args.csv is not None:
+    f = open(args.csv, "w+")
+    f.write("time;strands;temp;finals\n")
+    for output in Alloutputs:
+        f.write(";".join(str(v) for v in output) + '\n')
+
+    f.close()

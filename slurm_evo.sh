@@ -19,12 +19,12 @@ echo $SLURM_TASKS_PER_NODE
 
 for pmut in 1 2 4 8 16 32 64 100
 do
-    for mgenes in 1 2 3 4
+    for mgenes in 2
     do
-        for drand in 1 5 10 100 500
+        for drand in 500
         do
-            echo "python evo.py --pop 8 --pmut $pmut --mgenes $mgenes --gen 300 --drand $drand --profile"
-            python evo.py --pop 8 --pmut $pmut --mgenes $mgenes --gen 300 --drand $drand --profile --tour 2
+            echo "python evo.py --pop 8 --pmut $pmut --mgenes $mgenes --gen 10 --drand $drand --profile"
+            python evo.py --pop 8 --pmut $pmut --mgenes $mgenes --gen 10 --drand $drand --profile --tour 2
         done
     done
 done

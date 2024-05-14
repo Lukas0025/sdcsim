@@ -1,8 +1,17 @@
 #
-# RULE 110 cellular automaton implementation in DNA|SIMD
+# RULE 28 cellular automaton implementation in DNA|SIMD
 # @autor Lukáš Plevač <xpleva07@vutbr.cz>
 # @date 11.21.2023
 #
+
+domains:
+    A CACATAC
+    B CTTTACA
+    C TCTCCT
+    D ACACACA
+    E CAAAACT
+    F TCAAATC
+    G TCCACT
 
 define:
     0 [AB][CDE]

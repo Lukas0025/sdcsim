@@ -19,6 +19,7 @@ Strand::Strand(std::map<DOMAIN_DT, Nucleotides*> *nucleotides) {
     this->deleted     = false;
     this->readOnly    = false;
     this->nucleotides = nucleotides;
+    this->color       = NULL;
 }
 
 Strand::~Strand() {
@@ -105,4 +106,12 @@ Atom Strand::createAtom(Domain d) {
     Atom a = {d, NULL, this, 0, 0};
 
     return a;
+}
+
+const char* Strand::getColor() {
+    return this->color;
+}
+
+void Strand::setColor(const char* color) {
+    this->color = color;
 }

@@ -360,6 +360,7 @@ namespace output {
         for (unsigned i = 0; i < mainStrand->length(); i++) {
             auto atom = mainStrand->getAtom(i);
 
+            svg.setStrand(mainStrand);
             svg.bottom(i, atom->domain.get());
 
             if (atom->partner != NULL && atom->partner != multiAtom) {
@@ -385,10 +386,12 @@ namespace output {
                         //calculate new pos
                         pos    -= 1;
 
+                        svg.setStrand(overhang->strand);
                         svg.overHang(pos, i - pos, overhang->domain.get());
                    }
                 }
 
+                svg.setStrand(partner->strand);
                 svg.upper(i, partner->domain.get());
                 if (isLast(partner)) svg.upperEnd(i, partner->domain.get());
 
@@ -410,6 +413,7 @@ namespace output {
                         //calculate new pos
                         pos += 1;
 
+                        svg.setStrand(overhang->strand);
                         svg.overHang(pos, i - pos, overhang->domain.get());
                     }
                 }
