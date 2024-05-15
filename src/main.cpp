@@ -263,6 +263,23 @@ int main(int argc, char *argv[])
    if (outputType == "svg") {
       std::cout << svg.get();
    }
+
+   //free registers
+   for (auto &reg : registers) {
+      delete reg;
+   }
+
+   //free insts
+   for (auto &inst : instructions) {
+      for (auto &mol : inst) {
+         delete mol;
+      }
+   }
+
+   // free nucleotides
+   for (auto &nuc : nucleotides) {
+      delete nuc.second;
+   }
    
    
    return 0;

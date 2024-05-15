@@ -14,6 +14,11 @@ Register::Register(Molecule *init) {
     this->nucleotidesSim = false;
 }
 
+Register::~Register() {
+    delete this->reg;
+}
+
+
 Molecule* Register::get() {
     return this->reg;
 }

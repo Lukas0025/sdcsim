@@ -20,6 +20,8 @@ class Register {
          */
         Register(Molecule *init);
 
+        ~Register();
+
         /**
          * Get molecule of registr
          * @return molecule of registr 

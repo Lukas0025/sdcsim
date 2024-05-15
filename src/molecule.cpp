@@ -21,6 +21,10 @@ Molecule::Molecule(Strand *strand) {
 }
 
 Molecule::~Molecule() {
+    for (auto &strand : *(this->strands)) {
+        delete strand;
+    }
+
     delete this->strands;
 }
 
@@ -217,6 +221,9 @@ bool Molecule::finishDelete() {
 
     for (int i = this->strands->size() - 1; i >= 0; i--) {
         if (this->strands->at(i)->isDeleted()) {
+            //free stand
+            delete this->strands->at(i);
+
             //get lastest index
             this->strands->at(i) = this->strands->at(this->strands->size() - 1);
 
