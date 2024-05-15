@@ -1,0 +1,142 @@
+Your job is running on node(s):
+XCN01-Betynda
+Cores per node:
+1
+
+The following have been reloaded with a version change:
+  1) GCCcore/12.3.0 => GCCcore/13.2.0
+  2) Python/3.11.3-GCCcore-12.3.0 => Python/3.11.5-GCCcore-13.2.0
+  3) SQLite/3.42.0-GCCcore-12.3.0 => SQLite/3.43.1-GCCcore-13.2.0
+  4) Tcl/8.6.13-GCCcore-12.3.0 => Tcl/8.6.13-GCCcore-13.2.0
+  5) XZ/5.4.2-GCCcore-12.3.0 => XZ/5.4.4-GCCcore-13.2.0
+  6) binutils/2.40-GCCcore-12.3.0 => binutils/2.40-GCCcore-13.2.0
+  7) bzip2/1.0.8-GCCcore-12.3.0 => bzip2/1.0.8-GCCcore-13.2.0
+  8) libffi/3.4.4-GCCcore-12.3.0 => libffi/3.4.4-GCCcore-13.2.0
+  9) libreadline/8.2-GCCcore-12.3.0 => libreadline/8.2-GCCcore-13.2.0
+ 10) ncurses/6.4-GCCcore-12.3.0 => ncurses/6.4-GCCcore-13.2.0
+ 11) zlib/1.2.13-GCCcore-12.3.0 => zlib/1.2.13-GCCcore-13.2.0
+
+Lmod has detected the following error: The following module(s) are unknown:
+"Makefile"
+
+Please check the spelling or version number. Also try "module spider ..."
+It is also possible your cache file is out-of-date; it may help to try:
+  $ module --ignore_cache load "Makefile"
+
+Also make sure that all modulefiles written in TCL start with the string
+#%Module
+
+
+
+[INFO] No target specified using output from domain level simulation as target
+[INFO] Going to run ./build/sdcsim ./sdcasm/rule110.sdcasm -n -f assembly -T 0.0..100.0
+Time: 99998 Strands: 100
+[INFO] No target specified using output from domain level simulation as target
+[INFO] Going to run ./build/sdcsim ./sdcasm/rule110.sdcasm -n -f assembly -T 0.0..100.0
+Time: 99998 Strands: 20
+[INFO] No target specified using output from domain level simulation as target
+[INFO] Going to run ./build/sdcsim ./sdcasm/rule110.sdcasm -n -f assembly -T 0.0..100.0
+Time: 99998 Strands: 40
+[INFO] No target specified using output from domain level simulation as target
+[INFO] Going to run ./build/sdcsim ./sdcasm/rule110.sdcasm -n -f assembly -T 0.0..100.0
+Time: 99998 Strands: 10
+[INFO] No target specified using output from domain level simulation as target
+[INFO] Going to run ./build/sdcsim ./sdcasm/rule110.sdcasm -n -f assembly -T 0.0..100.0
+Time: 99998 Strands: 1000
+slurmstepd-XCN01-Betynda: error: *** JOB 96 ON XCN01-Betynda CANCELLED AT 2024-05-01T15:43:12 ***
+/var/modules/amd64/software/Python/3.11.5-GCCcore-13.2.0/lib/python3.11/site-packages/joblib/externals/loky/backend/resource_tracker.py:314: UserWarning: resource_tracker: There appear to be 44 leaked semlock objects to clean up at shutdown
+  warnings.warn(
+/var/modules/amd64/software/Python/3.11.5-GCCcore-13.2.0/lib/python3.11/site-packages/joblib/externals/loky/backend/resource_tracker.py:330: UserWarning: resource_tracker: /loky-1003698-2_4ek_df: FileNotFoundError(2, 'No such file or directory')
+  warnings.warn(f"resource_tracker: {name}: {e!r}")
+/var/modules/amd64/software/Python/3.11.5-GCCcore-13.2.0/lib/python3.11/site-packages/joblib/externals/loky/backend/resource_tracker.py:330: UserWarning: resource_tracker: /loky-1003698-3he18ev4: FileNotFoundError(2, 'No such file or directory')
+  warnings.warn(f"resource_tracker: {name}: {e!r}")
+/var/modules/amd64/software/Python/3.11.5-GCCcore-13.2.0/lib/python3.11/site-packages/joblib/externals/loky/backend/resource_tracker.py:330: UserWarning: resource_tracker: /loky-1003698-6kr685mu: FileNotFoundError(2, 'No such file or directory')
+  warnings.warn(f"resource_tracker: {name}: {e!r}")
+/var/modules/amd64/software/Python/3.11.5-GCCcore-13.2.0/lib/python3.11/site-packages/joblib/externals/loky/backend/resource_tracker.py:330: UserWarning: resource_tracker: /loky-1003698-_w0oh_qs: FileNotFoundError(2, 'No such file or directory')
+  warnings.warn(f"resource_tracker: {name}: {e!r}")
+/var/modules/amd64/software/Python/3.11.5-GCCcore-13.2.0/lib/python3.11/site-packages/joblib/externals/loky/backend/resource_tracker.py:330: UserWarning: resource_tracker: /loky-1003698-r0obqoos: FileNotFoundError(2, 'No such file or directory')
+  warnings.warn(f"resource_tracker: {name}: {e!r}")
+/var/modules/amd64/software/Python/3.11.5-GCCcore-13.2.0/lib/python3.11/site-packages/joblib/externals/loky/backend/resource_tracker.py:330: UserWarning: resource_tracker: /loky-1003698-lqhjevzr: FileNotFoundError(2, 'No such file or directory')
+  warnings.warn(f"resource_tracker: {name}: {e!r}")
+/var/modules/amd64/software/Python/3.11.5-GCCcore-13.2.0/lib/python3.11/site-packages/joblib/externals/loky/backend/resource_tracker.py:330: UserWarning: resource_tracker: /loky-1003698-qdkhyenx: FileNotFoundError(2, 'No such file or directory')
+  warnings.warn(f"resource_tracker: {name}: {e!r}")
+/var/modules/amd64/software/Python/3.11.5-GCCcore-13.2.0/lib/python3.11/site-packages/joblib/externals/loky/backend/resource_tracker.py:330: UserWarning: resource_tracker: /loky-1003698-excwskrp: FileNotFoundError(2, 'No such file or directory')
+  warnings.warn(f"resource_tracker: {name}: {e!r}")
+/var/modules/amd64/software/Python/3.11.5-GCCcore-13.2.0/lib/python3.11/site-packages/joblib/externals/loky/backend/resource_tracker.py:330: UserWarning: resource_tracker: /loky-1003698-7y3mt4ar: FileNotFoundError(2, 'No such file or directory')
+  warnings.warn(f"resource_tracker: {name}: {e!r}")
+/var/modules/amd64/software/Python/3.11.5-GCCcore-13.2.0/lib/python3.11/site-packages/joblib/externals/loky/backend/resource_tracker.py:330: UserWarning: resource_tracker: /loky-1003698-4oeyyj84: FileNotFoundError(2, 'No such file or directory')
+  warnings.warn(f"resource_tracker: {name}: {e!r}")
+/var/modules/amd64/software/Python/3.11.5-GCCcore-13.2.0/lib/python3.11/site-packages/joblib/externals/loky/backend/resource_tracker.py:330: UserWarning: resource_tracker: /loky-1003698-o_x1wz6w: FileNotFoundError(2, 'No such file or directory')
+  warnings.warn(f"resource_tracker: {name}: {e!r}")
+/var/modules/amd64/software/Python/3.11.5-GCCcore-13.2.0/lib/python3.11/site-packages/joblib/externals/loky/backend/resource_tracker.py:330: UserWarning: resource_tracker: /loky-1003698-shvr_k8v: FileNotFoundError(2, 'No such file or directory')
+  warnings.warn(f"resource_tracker: {name}: {e!r}")
+/var/modules/amd64/software/Python/3.11.5-GCCcore-13.2.0/lib/python3.11/site-packages/joblib/externals/loky/backend/resource_tracker.py:330: UserWarning: resource_tracker: /loky-1003698-krzz0z91: FileNotFoundError(2, 'No such file or directory')
+  warnings.warn(f"resource_tracker: {name}: {e!r}")
+/var/modules/amd64/software/Python/3.11.5-GCCcore-13.2.0/lib/python3.11/site-packages/joblib/externals/loky/backend/resource_tracker.py:330: UserWarning: resource_tracker: /loky-1003698-81q9qwtm: FileNotFoundError(2, 'No such file or directory')
+  warnings.warn(f"resource_tracker: {name}: {e!r}")
+/var/modules/amd64/software/Python/3.11.5-GCCcore-13.2.0/lib/python3.11/site-packages/joblib/externals/loky/backend/resource_tracker.py:330: UserWarning: resource_tracker: /loky-1003698-oo_0rerh: FileNotFoundError(2, 'No such file or directory')
+  warnings.warn(f"resource_tracker: {name}: {e!r}")
+/var/modules/amd64/software/Python/3.11.5-GCCcore-13.2.0/lib/python3.11/site-packages/joblib/externals/loky/backend/resource_tracker.py:330: UserWarning: resource_tracker: /loky-1003698-nzo26dcc: FileNotFoundError(2, 'No such file or directory')
+  warnings.warn(f"resource_tracker: {name}: {e!r}")
+/var/modules/amd64/software/Python/3.11.5-GCCcore-13.2.0/lib/python3.11/site-packages/joblib/externals/loky/backend/resource_tracker.py:330: UserWarning: resource_tracker: /loky-1003698-xeoktrya: FileNotFoundError(2, 'No such file or directory')
+  warnings.warn(f"resource_tracker: {name}: {e!r}")
+/var/modules/amd64/software/Python/3.11.5-GCCcore-13.2.0/lib/python3.11/site-packages/joblib/externals/loky/backend/resource_tracker.py:330: UserWarning: resource_tracker: /loky-1003698-mc6ps0ag: FileNotFoundError(2, 'No such file or directory')
+  warnings.warn(f"resource_tracker: {name}: {e!r}")
+/var/modules/amd64/software/Python/3.11.5-GCCcore-13.2.0/lib/python3.11/site-packages/joblib/externals/loky/backend/resource_tracker.py:330: UserWarning: resource_tracker: /loky-1003698-xc2tj_ko: FileNotFoundError(2, 'No such file or directory')
+  warnings.warn(f"resource_tracker: {name}: {e!r}")
+/var/modules/amd64/software/Python/3.11.5-GCCcore-13.2.0/lib/python3.11/site-packages/joblib/externals/loky/backend/resource_tracker.py:330: UserWarning: resource_tracker: /loky-1003698-jbtawzgu: FileNotFoundError(2, 'No such file or directory')
+  warnings.warn(f"resource_tracker: {name}: {e!r}")
+/var/modules/amd64/software/Python/3.11.5-GCCcore-13.2.0/lib/python3.11/site-packages/joblib/externals/loky/backend/resource_tracker.py:330: UserWarning: resource_tracker: /loky-1003698-nsg5n0k4: FileNotFoundError(2, 'No such file or directory')
+  warnings.warn(f"resource_tracker: {name}: {e!r}")
+/var/modules/amd64/software/Python/3.11.5-GCCcore-13.2.0/lib/python3.11/site-packages/joblib/externals/loky/backend/resource_tracker.py:330: UserWarning: resource_tracker: /loky-1003698-mo794j6n: FileNotFoundError(2, 'No such file or directory')
+  warnings.warn(f"resource_tracker: {name}: {e!r}")
+/var/modules/amd64/software/Python/3.11.5-GCCcore-13.2.0/lib/python3.11/site-packages/joblib/externals/loky/backend/resource_tracker.py:330: UserWarning: resource_tracker: /loky-1003698-3ly5vs5a: FileNotFoundError(2, 'No such file or directory')
+  warnings.warn(f"resource_tracker: {name}: {e!r}")
+/var/modules/amd64/software/Python/3.11.5-GCCcore-13.2.0/lib/python3.11/site-packages/joblib/externals/loky/backend/resource_tracker.py:330: UserWarning: resource_tracker: /loky-1003698-go1ivjeq: FileNotFoundError(2, 'No such file or directory')
+  warnings.warn(f"resource_tracker: {name}: {e!r}")
+/var/modules/amd64/software/Python/3.11.5-GCCcore-13.2.0/lib/python3.11/site-packages/joblib/externals/loky/backend/resource_tracker.py:330: UserWarning: resource_tracker: /loky-1003698-mldun0b7: FileNotFoundError(2, 'No such file or directory')
+  warnings.warn(f"resource_tracker: {name}: {e!r}")
+/var/modules/amd64/software/Python/3.11.5-GCCcore-13.2.0/lib/python3.11/site-packages/joblib/externals/loky/backend/resource_tracker.py:330: UserWarning: resource_tracker: /loky-1003698-efz5wtb0: FileNotFoundError(2, 'No such file or directory')
+  warnings.warn(f"resource_tracker: {name}: {e!r}")
+/var/modules/amd64/software/Python/3.11.5-GCCcore-13.2.0/lib/python3.11/site-packages/joblib/externals/loky/backend/resource_tracker.py:330: UserWarning: resource_tracker: /loky-1003698-x6yd0unx: FileNotFoundError(2, 'No such file or directory')
+  warnings.warn(f"resource_tracker: {name}: {e!r}")
+/var/modules/amd64/software/Python/3.11.5-GCCcore-13.2.0/lib/python3.11/site-packages/joblib/externals/loky/backend/resource_tracker.py:330: UserWarning: resource_tracker: /loky-1003698-kj872djg: FileNotFoundError(2, 'No such file or directory')
+  warnings.warn(f"resource_tracker: {name}: {e!r}")
+/var/modules/amd64/software/Python/3.11.5-GCCcore-13.2.0/lib/python3.11/site-packages/joblib/externals/loky/backend/resource_tracker.py:330: UserWarning: resource_tracker: /loky-1003698-p4relb98: FileNotFoundError(2, 'No such file or directory')
+  warnings.warn(f"resource_tracker: {name}: {e!r}")
+/var/modules/amd64/software/Python/3.11.5-GCCcore-13.2.0/lib/python3.11/site-packages/joblib/externals/loky/backend/resource_tracker.py:330: UserWarning: resource_tracker: /loky-1003698-tyr4xw7m: FileNotFoundError(2, 'No such file or directory')
+  warnings.warn(f"resource_tracker: {name}: {e!r}")
+/var/modules/amd64/software/Python/3.11.5-GCCcore-13.2.0/lib/python3.11/site-packages/joblib/externals/loky/backend/resource_tracker.py:330: UserWarning: resource_tracker: /loky-1003698-2ckspju0: FileNotFoundError(2, 'No such file or directory')
+  warnings.warn(f"resource_tracker: {name}: {e!r}")
+/var/modules/amd64/software/Python/3.11.5-GCCcore-13.2.0/lib/python3.11/site-packages/joblib/externals/loky/backend/resource_tracker.py:330: UserWarning: resource_tracker: /loky-1003698-cb8zrg60: FileNotFoundError(2, 'No such file or directory')
+  warnings.warn(f"resource_tracker: {name}: {e!r}")
+/var/modules/amd64/software/Python/3.11.5-GCCcore-13.2.0/lib/python3.11/site-packages/joblib/externals/loky/backend/resource_tracker.py:330: UserWarning: resource_tracker: /loky-1003698-v95gbhut: FileNotFoundError(2, 'No such file or directory')
+  warnings.warn(f"resource_tracker: {name}: {e!r}")
+/var/modules/amd64/software/Python/3.11.5-GCCcore-13.2.0/lib/python3.11/site-packages/joblib/externals/loky/backend/resource_tracker.py:330: UserWarning: resource_tracker: /loky-1003698-5wbeqgnv: FileNotFoundError(2, 'No such file or directory')
+  warnings.warn(f"resource_tracker: {name}: {e!r}")
+/var/modules/amd64/software/Python/3.11.5-GCCcore-13.2.0/lib/python3.11/site-packages/joblib/externals/loky/backend/resource_tracker.py:330: UserWarning: resource_tracker: /loky-1003698-ak1cuilc: FileNotFoundError(2, 'No such file or directory')
+  warnings.warn(f"resource_tracker: {name}: {e!r}")
+/var/modules/amd64/software/Python/3.11.5-GCCcore-13.2.0/lib/python3.11/site-packages/joblib/externals/loky/backend/resource_tracker.py:330: UserWarning: resource_tracker: /loky-1003698-b_frc9yg: FileNotFoundError(2, 'No such file or directory')
+  warnings.warn(f"resource_tracker: {name}: {e!r}")
+/var/modules/amd64/software/Python/3.11.5-GCCcore-13.2.0/lib/python3.11/site-packages/joblib/externals/loky/backend/resource_tracker.py:330: UserWarning: resource_tracker: /loky-1003698-b6rlye96: FileNotFoundError(2, 'No such file or directory')
+  warnings.warn(f"resource_tracker: {name}: {e!r}")
+/var/modules/amd64/software/Python/3.11.5-GCCcore-13.2.0/lib/python3.11/site-packages/joblib/externals/loky/backend/resource_tracker.py:330: UserWarning: resource_tracker: /loky-1003698-9ynubav_: FileNotFoundError(2, 'No such file or directory')
+  warnings.warn(f"resource_tracker: {name}: {e!r}")
+/var/modules/amd64/software/Python/3.11.5-GCCcore-13.2.0/lib/python3.11/site-packages/joblib/externals/loky/backend/resource_tracker.py:330: UserWarning: resource_tracker: /loky-1003698-ro2n32mp: FileNotFoundError(2, 'No such file or directory')
+  warnings.warn(f"resource_tracker: {name}: {e!r}")
+/var/modules/amd64/software/Python/3.11.5-GCCcore-13.2.0/lib/python3.11/site-packages/joblib/externals/loky/backend/resource_tracker.py:330: UserWarning: resource_tracker: /loky-1003698-fsbuuj5k: FileNotFoundError(2, 'No such file or directory')
+  warnings.warn(f"resource_tracker: {name}: {e!r}")
+/var/modules/amd64/software/Python/3.11.5-GCCcore-13.2.0/lib/python3.11/site-packages/joblib/externals/loky/backend/resource_tracker.py:330: UserWarning: resource_tracker: /loky-1003698-ue06zs8z: FileNotFoundError(2, 'No such file or directory')
+  warnings.warn(f"resource_tracker: {name}: {e!r}")
+/var/modules/amd64/software/Python/3.11.5-GCCcore-13.2.0/lib/python3.11/site-packages/joblib/externals/loky/backend/resource_tracker.py:330: UserWarning: resource_tracker: /loky-1003698-ed4de89d: FileNotFoundError(2, 'No such file or directory')
+  warnings.warn(f"resource_tracker: {name}: {e!r}")
+/var/modules/amd64/software/Python/3.11.5-GCCcore-13.2.0/lib/python3.11/site-packages/joblib/externals/loky/backend/resource_tracker.py:330: UserWarning: resource_tracker: /loky-1003698-oqeqj73j: FileNotFoundError(2, 'No such file or directory')
+  warnings.warn(f"resource_tracker: {name}: {e!r}")
+/var/modules/amd64/software/Python/3.11.5-GCCcore-13.2.0/lib/python3.11/site-packages/joblib/externals/loky/backend/resource_tracker.py:330: UserWarning: resource_tracker: /loky-1003698-xd1__i1w: FileNotFoundError(2, 'No such file or directory')
+  warnings.warn(f"resource_tracker: {name}: {e!r}")
+/var/modules/amd64/software/Python/3.11.5-GCCcore-13.2.0/lib/python3.11/site-packages/joblib/externals/loky/backend/resource_tracker.py:314: UserWarning: resource_tracker: There appear to be 2 leaked folder objects to clean up at shutdown
+  warnings.warn(
+/var/modules/amd64/software/Python/3.11.5-GCCcore-13.2.0/lib/python3.11/site-packages/joblib/externals/loky/backend/resource_tracker.py:330: UserWarning: resource_tracker: /dev/shm/joblib_memmapping_folder_1003698_fd2d11edffab4e20a5f67500eaa8e6ad_8db617cca53f4edfb990429621d08a37: FileNotFoundError(2, 'No such file or directory')
+  warnings.warn(f"resource_tracker: {name}: {e!r}")
+/var/modules/amd64/software/Python/3.11.5-GCCcore-13.2.0/lib/python3.11/site-packages/joblib/externals/loky/backend/resource_tracker.py:330: UserWarning: resource_tracker: /dev/shm/joblib_memmapping_folder_1003698_fd2d11edffab4e20a5f67500eaa8e6ad_15873c74c940471a995e6d3b0be67d1d: FileNotFoundError(2, 'No such file or directory')
+  warnings.warn(f"resource_tracker: {name}: {e!r}")

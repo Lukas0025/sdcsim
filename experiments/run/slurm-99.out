@@ -1,0 +1,210 @@
+Your job is running on node(s):
+XCN01-Betynda
+Cores per node:
+1
+
+The following have been reloaded with a version change:
+  1) GCCcore/12.3.0 => GCCcore/13.2.0
+  2) Python/3.11.3-GCCcore-12.3.0 => Python/3.11.5-GCCcore-13.2.0
+  3) SQLite/3.42.0-GCCcore-12.3.0 => SQLite/3.43.1-GCCcore-13.2.0
+  4) Tcl/8.6.13-GCCcore-12.3.0 => Tcl/8.6.13-GCCcore-13.2.0
+  5) XZ/5.4.2-GCCcore-12.3.0 => XZ/5.4.4-GCCcore-13.2.0
+  6) binutils/2.40-GCCcore-12.3.0 => binutils/2.40-GCCcore-13.2.0
+  7) bzip2/1.0.8-GCCcore-12.3.0 => bzip2/1.0.8-GCCcore-13.2.0
+  8) libffi/3.4.4-GCCcore-12.3.0 => libffi/3.4.4-GCCcore-13.2.0
+  9) libreadline/8.2-GCCcore-12.3.0 => libreadline/8.2-GCCcore-13.2.0
+ 10) ncurses/6.4-GCCcore-12.3.0 => ncurses/6.4-GCCcore-13.2.0
+ 11) zlib/1.2.13-GCCcore-12.3.0 => zlib/1.2.13-GCCcore-13.2.0
+
+Lmod has detected the following error: The following module(s) are unknown:
+"Makefile"
+
+Please check the spelling or version number. Also try "module spider ..."
+It is also possible your cache file is out-of-date; it may help to try:
+  $ module --ignore_cache load "Makefile"
+
+Also make sure that all modulefiles written in TCL start with the string
+#%Module
+
+
+
+[INFO] No target specified using output from domain level simulation as target
+[INFO] Going to run ./build/sdcsim ./sdcasm/rule110.sdcasm -n -f assembly -T 24.5..25.5
+Time: 0 Strands: 100
+Time: 50 Strands: 100
+Time: 100 Strands: 100
+Time: 150 Strands: 100
+Time: 200 Strands: 100
+Time: 250 Strands: 100
+Time: 300 Strands: 100
+Time: 350 Strands: 100
+Time: 400 Strands: 100
+Time: 450 Strands: 100
+Time: 500 Strands: 100
+Time: 550 Strands: 100
+Time: 600 Strands: 100
+Time: 650 Strands: 100
+Time: 700 Strands: 100
+Time: 750 Strands: 100
+Time: 800 Strands: 100
+Time: 850 Strands: 100
+Time: 900 Strands: 100
+Time: 950 Strands: 100
+Time: 1000 Strands: 100
+Time: 1050 Strands: 100
+Time: 1100 Strands: 100
+Time: 1150 Strands: 100
+Time: 1200 Strands: 100
+Time: 1250 Strands: 100
+Time: 1300 Strands: 100
+Time: 1350 Strands: 100
+Time: 1400 Strands: 100
+Time: 1450 Strands: 100
+Time: 1500 Strands: 100
+Time: 1550 Strands: 100
+Time: 1600 Strands: 100
+Time: 1650 Strands: 100
+Time: 1700 Strands: 100
+Time: 1750 Strands: 100
+Time: 1800 Strands: 100
+Time: 1850 Strands: 100
+Time: 1900 Strands: 100
+Time: 1950 Strands: 100
+Time: 2000 Strands: 100
+Time: 2050 Strands: 100
+Time: 2100 Strands: 100
+Time: 2150 Strands: 100
+Time: 2200 Strands: 100
+Time: 2250 Strands: 100
+Time: 2300 Strands: 100
+Time: 2350 Strands: 100
+Time: 2400 Strands: 100
+Time: 2450 Strands: 100
+Time: 2500 Strands: 100
+Time: 2550 Strands: 100
+Time: 2600 Strands: 100
+Time: 2650 Strands: 100
+Time: 2700 Strands: 100
+Time: 2750 Strands: 100
+Time: 2800 Strands: 100
+Time: 2850 Strands: 100
+Time: 2900 Strands: 100
+Time: 2950 Strands: 100
+Time: 3000 Strands: 100
+Time: 3050 Strands: 100
+Time: 3100 Strands: 100
+Time: 3150 Strands: 100
+Time: 3200 Strands: 100
+Time: 3250 Strands: 100
+Time: 3300 Strands: 100
+Time: 3350 Strands: 100
+Time: 3400 Strands: 100
+Time: 3450 Strands: 100
+Time: 3500 Strands: 100
+Time: 3550 Strands: 100
+Time: 3600 Strands: 100
+Time: 3650 Strands: 100
+Time: 3700 Strands: 100
+Time: 3750 Strands: 100
+Time: 3800 Strands: 100
+Time: 3850 Strands: 100
+Time: 3900 Strands: 100
+Time: 3950 Strands: 100
+Time: 4000 Strands: 100
+Time: 4050 Strands: 100
+Time: 4100 Strands: 100
+Time: 4150 Strands: 100
+Time: 4200 Strands: 100
+Time: 4250 Strands: 100
+Time: 4300 Strands: 100
+Time: 4350 Strands: 100
+Time: 4400 Strands: 100
+Time: 4450 Strands: 100
+Time: 4500 Strands: 100
+Time: 4550 Strands: 100
+Time: 4600 Strands: 100
+Time: 4650 Strands: 100
+Time: 4700 Strands: 100
+Time: 4750 Strands: 100
+Time: 4800 Strands: 100
+Time: 4850 Strands: 100
+Time: 4900 Strands: 100
+Time: 4950 Strands: 100
+Time: 5000 Strands: 100
+Time: 5050 Strands: 100
+Time: 5100 Strands: 100
+Time: 5150 Strands: 100
+Time: 5200 Strands: 100
+Time: 5250 Strands: 100
+Time: 5300 Strands: 100
+Time: 5350 Strands: 100
+Time: 5400 Strands: 100
+Time: 5450 Strands: 100
+Time: 5500 Strands: 100
+Time: 5550 Strands: 100
+Time: 5600 Strands: 100
+Time: 5650 Strands: 100
+Time: 5700 Strands: 100
+Time: 5750 Strands: 100
+Time: 5800 Strands: 100
+Time: 5850 Strands: 100
+Time: 5900 Strands: 100
+Time: 5950 Strands: 100
+Time: 6000 Strands: 100
+Time: 6050 Strands: 100
+Time: 6100 Strands: 100
+Time: 6150 Strands: 100
+Time: 6200 Strands: 100
+Time: 6250 Strands: 100
+Time: 6300 Strands: 100
+Time: 6350 Strands: 100
+Time: 6400 Strands: 100
+Time: 6450 Strands: 100
+Time: 6500 Strands: 100
+Time: 6550 Strands: 100
+Time: 6600 Strands: 100
+Time: 6650 Strands: 100
+Time: 6700 Strands: 100
+Time: 6750 Strands: 100
+Time: 6800 Strands: 100
+Time: 6850 Strands: 100
+Time: 6900 Strands: 100
+Time: 6950 Strands: 100
+Time: 7000 Strands: 100
+Time: 7050 Strands: 100
+Time: 7100 Strands: 100
+Time: 7150 Strands: 100
+Time: 7200 Strands: 100
+Time: 7250 Strands: 100
+Time: 7300 Strands: 100
+Time: 7350 Strands: 100
+Time: 7400 Strands: 100
+Time: 7450 Strands: 100
+Time: 7500 Strands: 100
+Time: 7550 Strands: 100
+Time: 7600 Strands: 100
+Time: 7650 Strands: 100
+Time: 7700 Strands: 100
+Time: 7750 Strands: 100
+Time: 7800 Strands: 100
+Time: 7850 Strands: 100
+Time: 7900 Strands: 100
+Time: 7950 Strands: 100
+Time: 8000 Strands: 100
+Time: 8050 Strands: 100
+Time: 8100 Strands: 100
+Time: 8150 Strands: 100
+Time: 8200 Strands: 100
+Time: 8250 Strands: 100
+Time: 8300 Strands: 100
+Time: 8350 Strands: 100
+Time: 8400 Strands: 100
+Time: 8450 Strands: 100
+Time: 8500 Strands: 100
+Time: 8550 Strands: 100
+Time: 8600 Strands: 100
+slurmstepd-XCN01-Betynda: error: *** JOB 99 ON XCN01-Betynda CANCELLED AT 2024-05-01T16:27:55 ***
+/var/modules/amd64/software/Python/3.11.5-GCCcore-13.2.0/lib/python3.11/site-packages/joblib/externals/loky/backend/resource_tracker.py:314: UserWarning: resource_tracker: There appear to be 44 leaked semlock objects to clean up at shutdown
+  warnings.warn(
+/var/modules/amd64/software/Python/3.11.5-GCCcore-13.2.0/lib/python3.11/site-packages/joblib/externals/loky/backend/resource_tracker.py:314: UserWarning: resource_tracker: There appear to be 174 leaked folder objects to clean up at shutdown
+  warnings.warn(

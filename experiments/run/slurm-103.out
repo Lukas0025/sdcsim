@@ -1,0 +1,111 @@
+Your job is running on node(s):
+XCN01-Betynda
+Cores per node:
+1
+
+The following have been reloaded with a version change:
+  1) GCCcore/12.3.0 => GCCcore/13.2.0
+  2) Python/3.11.3-GCCcore-12.3.0 => Python/3.11.5-GCCcore-13.2.0
+  3) SQLite/3.42.0-GCCcore-12.3.0 => SQLite/3.43.1-GCCcore-13.2.0
+  4) Tcl/8.6.13-GCCcore-12.3.0 => Tcl/8.6.13-GCCcore-13.2.0
+  5) XZ/5.4.2-GCCcore-12.3.0 => XZ/5.4.4-GCCcore-13.2.0
+  6) binutils/2.40-GCCcore-12.3.0 => binutils/2.40-GCCcore-13.2.0
+  7) bzip2/1.0.8-GCCcore-12.3.0 => bzip2/1.0.8-GCCcore-13.2.0
+  8) libffi/3.4.4-GCCcore-12.3.0 => libffi/3.4.4-GCCcore-13.2.0
+  9) libreadline/8.2-GCCcore-12.3.0 => libreadline/8.2-GCCcore-13.2.0
+ 10) ncurses/6.4-GCCcore-12.3.0 => ncurses/6.4-GCCcore-13.2.0
+ 11) zlib/1.2.13-GCCcore-12.3.0 => zlib/1.2.13-GCCcore-13.2.0
+
+Lmod has detected the following error: The following module(s) are unknown:
+"Makefile"
+
+Please check the spelling or version number. Also try "module spider ..."
+It is also possible your cache file is out-of-date; it may help to try:
+  $ module --ignore_cache load "Makefile"
+
+Also make sure that all modulefiles written in TCL start with the string
+#%Module
+
+
+
+[INFO] No target specified using output from domain level simulation as target
+[INFO] Going to run ./build/sdcsim ./sdcasm/rule28.sdcasm -n -f assembly -T 22.5..23.5
+Time: 0 Strands: 20
+Time: 8000 Strands: 20
+Time: 16000 Strands: 20
+Time: 24000 Strands: 20
+Time: 32000 Strands: 20
+Time: 40000 Strands: 20
+Time: 48000 Strands: 20
+Time: 56000 Strands: 20
+Time: 64000 Strands: 20
+Time: 72000 Strands: 20
+Time: 80000 Strands: 20
+Time: 88000 Strands: 20
+Time: 96000 Strands: 20
+Time: 104000 Strands: 20
+Time: 112000 Strands: 20
+Time: 120000 Strands: 20
+Time: 128000 Strands: 20
+Time: 136000 Strands: 20
+Time: 144000 Strands: 20
+Time: 152000 Strands: 20
+Time: 160000 Strands: 20
+Time: 168000 Strands: 20
+Time: 176000 Strands: 20
+Time: 184000 Strands: 20
+Time: 192000 Strands: 20
+[INFO] No target specified using output from domain level simulation as target
+[INFO] Going to run ./build/sdcsim ./sdcasm/rule28.sdcasm -n -f assembly -T 22.5..23.5
+Time: 0 Strands: 40
+Time: 8000 Strands: 40
+Time: 16000 Strands: 40
+Time: 24000 Strands: 40
+Time: 32000 Strands: 40
+Time: 40000 Strands: 40
+Time: 48000 Strands: 40
+Time: 56000 Strands: 40
+Time: 64000 Strands: 40
+Time: 72000 Strands: 40
+Time: 80000 Strands: 40
+Time: 88000 Strands: 40
+Time: 96000 Strands: 40
+Time: 104000 Strands: 40
+Time: 112000 Strands: 40
+Time: 120000 Strands: 40
+Time: 128000 Strands: 40
+Time: 136000 Strands: 40
+Time: 144000 Strands: 40
+Time: 152000 Strands: 40
+Time: 160000 Strands: 40
+Time: 168000 Strands: 40
+Time: 176000 Strands: 40
+Time: 184000 Strands: 40
+Time: 192000 Strands: 40
+[INFO] No target specified using output from domain level simulation as target
+[INFO] Going to run ./build/sdcsim ./sdcasm/rule28.sdcasm -n -f assembly -T 22.5..23.5
+Time: 0 Strands: 10
+Time: 8000 Strands: 10
+Time: 16000 Strands: 10
+Time: 24000 Strands: 10
+Time: 32000 Strands: 10
+Time: 40000 Strands: 10
+Time: 48000 Strands: 10
+Time: 56000 Strands: 10
+Time: 64000 Strands: 10
+Time: 72000 Strands: 10
+Time: 80000 Strands: 10
+Time: 88000 Strands: 10
+Time: 96000 Strands: 10
+Time: 104000 Strands: 10
+Time: 112000 Strands: 10
+Time: 120000 Strands: 10
+Time: 128000 Strands: 10
+Time: 136000 Strands: 10
+Time: 144000 Strands: 10
+Time: 152000 Strands: 10
+Time: 160000 Strands: 10
+Time: 168000 Strands: 10
+Time: 176000 Strands: 10
+Time: 184000 Strands: 10
+Time: 192000 Strands: 10

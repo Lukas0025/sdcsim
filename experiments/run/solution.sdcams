@@ -1,0 +1,14 @@
+define:
+    0 {A}[BCD]
+    1 [ABC]{D}
+
+data:
+    00
+    01
+    10
+    11
+
+instructions:
+    {} {D*A*B*}  # instruction 0
+    {A*B*B*} {B*C*D*} # instruction 1
+    {CDABE} {}  # instruction 2
