@@ -2,6 +2,8 @@
 #### Simulator for SIMD||DNA model of computation, as defined in https://doi.org/10.1007/978-3-030-26807-7_12
 ##### website: https://lukas0025.github.io/sdc_sim/
 
+![](https://lukas0025.github.io/sdc_sim/assets/img/header.gif)
+
 ### Building
 
 to set up the application you will at least need make, cmake and g++ with openMP support. If you want to set up a GPU accelerated version, you need NVHPC in addition.
