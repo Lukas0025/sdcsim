@@ -46,8 +46,8 @@ Optional arguments:
   --silent           Print only necessary outputs 
   -d, --decode       Print decoded version of registers (by macros) 
   -a, --all          Show all instruction interactions 
-  -n, --nucleotides  Run sumulation on nucleotides level 
-  -g, --gpu          Run sumulation on nucleotides level on GPU 
+  -n, --nucleotides  Run simulation on nucleotides level 
+  -g, --gpu          Run simulation on nucleotides level on GPU 
   -c, --color        Select color scheme for svg output [nargs=0..1] [default: "domain"] {domain, chain, black}
   -b, --break        Break before instruction [nargs=0..1] [default: 2147483647]
   -t, --time         registr expose time to instruction [nargs=0..1] [default: -1]
